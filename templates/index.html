@@ -286,7 +286,8 @@
                 </div>
             </div>
             
-            <div class="table-container" style="padding: 0;">
+            <div class="table-container" style="padding: 32px; overflow-x: auto;">
+                <div style="border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 12px 30px -8px rgba(0,0,0,0.1), 0 4px 10px -4px rgba(0,0,0,0.04);">
                 <table class="battery-table premium-table" id="battery-table">
                     <thead>
                         <tr>
@@ -334,6 +335,7 @@
                     </tr>
                 </tfoot>
             </table>
+            </div> <!-- End 3D wrapper -->
             
             <div id="empty-state" class="empty-state hidden">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>

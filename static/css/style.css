@@ -2214,3 +2214,19 @@ th:nth-child(16) {
     top: 38px !important;
 }
 
+
+/* MORE ZOOM OUT */
+.premium-table th,
+.premium-table td {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+}
+.premium-table thead tr:nth-child(1) th {
+    font-size: 0.75rem !important;
+    padding: 8px 10px !important;
+}
+.premium-table thead tr:nth-child(2) th {
+    font-size: 0.65rem !important;
+    top: 32px !important;
+}
+
