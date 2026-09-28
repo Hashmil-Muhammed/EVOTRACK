@@ -2166,3 +2166,14 @@ th:nth-child(16) {
 /* Remove default table CSS conflicts */
 .battery-table { all: unset; display: table; width: 100%; }
 
+
+/* Hide all scrollbars across the application but keep functionality */
+::-webkit-scrollbar {
+    display: none !important;
+}
+
+* {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+}
+
