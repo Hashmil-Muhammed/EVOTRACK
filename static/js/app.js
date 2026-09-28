@@ -59,13 +59,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Scroll listener for Top Nav Actions (Export, Hamburger, Menu links)
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 150) {
-            document.body.classList.add('scrolled');
-        } else {
-            document.body.classList.remove('scrolled');
-        }
-    }, { passive: true });
+    const scrollContainer = document.querySelector('.main-content-wrapper');
+    if (scrollContainer) {
+        scrollContainer.addEventListener('scroll', (e) => {
+            if (e.target.scrollTop > 150) {
+                document.body.classList.add('scrolled');
+            } else {
+                document.body.classList.remove('scrolled');
+            }
+        }, { passive: true });
+    }
 
     // Event Listeners
     if(btnAddRecord) btnAddRecord.addEventListener('click', createNewRow);
