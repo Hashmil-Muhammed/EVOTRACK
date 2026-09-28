@@ -412,16 +412,16 @@ body {
 
 /* --- Offcanvas Menu & Top Actions Colors --- */
 /* Default (At Top over Video) */
-#slide-menu .nav-item { color: rgba(255, 255, 255, 0.7); }
-#slide-menu .nav-item.active { color: #fff; }
-#btn-export { color: #fff; }
-#menu-toggle .line { background: #fff; }
+#slide-menu .nav-item { color: rgba(255, 255, 255, 0.7) !important; }
+#slide-menu .nav-item.active { color: #fff !important; }
+#btn-export { color: #fff !important; }
+#menu-toggle .line { background: #fff !important; }
 
 /* Scrolled (Adapts to Light/Dark Mode automatically via variables) */
-body.scrolled #slide-menu .nav-item { color: var(--text-muted); }
-body.scrolled #slide-menu .nav-item.active { color: var(--text-main); }
-body.scrolled #btn-export { color: var(--text-main); }
-body.scrolled #menu-toggle .line { background: var(--text-main); }
+body.scrolled #slide-menu .nav-item { color: var(--text-muted) !important; }
+body.scrolled #slide-menu .nav-item.active { color: var(--text-main) !important; }
+body.scrolled #btn-export { color: var(--text-main) !important; }
+body.scrolled #menu-toggle .line { background: var(--text-main) !important; }
 
 /* Hamburger Animation */
 #menu-toggle.active {
