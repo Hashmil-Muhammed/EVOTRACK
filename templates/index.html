@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Battery Log</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div id="toast-container"></div>
+    
+    <div class="app-container">
+        <!-- Main Content -->
+        <div class="main-content-wrapper">
+
+    <main class="app-main">
+        
+        <!-- Global Video Header (with Navbar) -->
+        <div class="card" style="margin-bottom: 24px; padding: 0; overflow: hidden; border-radius: 20px; height: 92vh; display: flex; justify-content: center; align-items: center; background: rgb(230, 221, 200); position: relative;">
+            
+            <!-- Navbar Overlay Inside Card -->
+            <header class="top-navbar" style="position: absolute; top: 0; left: 0; right: 0; z-index: 1000; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; background: transparent;">
+                
+                <div class="brand-logo" style="display: flex; align-items: center; gap: 14px;">
+                    <img src="/static/img/ev-logo.png" alt="EV Logo" style="height: 48px; filter: brightness(0) invert(1);">
+                    <span class="brand-name" style="font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; color: #fff; text-transform: uppercase;">EVOTRACK</span>
+                </div>
+                
+                <!-- <nav class="top-nav-links" style="display: flex; gap: 36px; align-items: center;">
+                    <a href="#" class="nav-item active" data-view="view-dashboard" style="color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 600;">Dashboard</a>
+                    <a href="#" class="nav-item" data-view="view-service" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;">Service</a>
+                    <a href="#" class="nav-item" data-view="view-tyre" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;">Tyre Change</a>
+                    <a href="#" class="nav-item" data-view="view-issues" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;">Vehicle Issues</a>
+                    <a href="#" class="nav-item" data-view="view-additional" style="color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s;">Additional Service</a>
+                </nav> -->
+                
+                <!-- Slide Menu (Right Side) -->
+                <nav id="slide-menu" style="position: fixed; top: 0; right: -100%; height: 100vh; width: 300px; display: flex; flex-direction: column; justify-content: center; gap: 36px; padding-left: 60px; background: transparent; transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1500; pointer-events: none;">
+                    <a href="#" class="nav-item active" data-view="view-dashboard" style="text-decoration: none; font-size: 0.95rem; font-weight: 600; pointer-events: auto;">Dashboard</a>
+                    <a href="#" class="nav-item" data-view="view-service" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Service</a>
+                    <a href="#" class="nav-item" data-view="view-tyre" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Tyre Change</a>
+                    <a href="#" class="nav-item" data-view="view-issues" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Vehicle Issues</a>
+                    <a href="#" class="nav-item" data-view="view-additional" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Additional Service</a>
+                </nav>
+                
+                <div class="top-nav-actions" style="display: flex; align-items: center; gap: 32px; padding-right: 12px;">
+                    <div class="theme-switch-wrapper" style="display: flex; align-items: center; gap: 8px;">
+                        <svg class="theme-icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        
+                        <div id="btn-theme-toggle" class="theme-switch" title="Toggle Dark Mode">
+                            <div class="theme-switch-thumb"></div>
+                        </div>
+                        
+                        <svg class="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </div>
+                    
+                    <a href="javascript:void(0)" id="btn-export" style="background: transparent; color: #fff; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;" title="Export Data">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Export
+                    </a>
+                    
+                    <div id="menu-toggle" style="cursor: pointer; display: flex; flex-direction: column; gap: 6px; z-index: 2000; transition: transform 0.4s ease;">
+                        <div class="line" style="width: 28px; height: 3px; transition: all 0.4s ease; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+                        <div class="line" style="width: 28px; height: 3px; transition: all 0.4s ease; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- First Video (Intro animation) -->
+            <video id="one3d-intro" src="https://d7ito9xmxyjfe.cloudfront.net/assets/videos/Web-intro-video.mp4" autoplay="true" preload="auto" muted="true" playsinline="true" webkit-playsinline="true" autobuffer="true" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 5;" onended="this.style.display='none'; document.getElementById('one3d-loop').style.display='block'; document.getElementById('one3d-loop').play();"></video>
+            
+            <!-- Second Video (Looping idle animation) -->
+            <video id="one3d-loop" src="https://d7ito9xmxyjfe.cloudfront.net/assets/videos/model-54744225AQNR/Web/loopvideo.mp4" loop="true" preload="auto" muted="true" playsinline="true" webkit-playsinline="true" autobuffer="true" style="width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top: 0; left: 0; z-index: 1;"></video>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="view-section">
+            
+            <!-- SS2 Hero Dashboard - Single Big Container Card -->
+            <div class="dashboard-hero" style="position: relative;">
+                <img src="https://s7ap1.scene7.com/is/image/tatapassenger/tata-ev-logo-70x40-black?$HL-120-80-D$&fit=fit&fmt=webp-alpha" class="tata-hero-logo" alt="TATA.ev Logo" style="position: absolute; top: 28px; left: 32px; height: 56px; z-index: 10;">
+                
+                <!-- Left: Car Section -->
+                <div class="hero-car-section">
+                    <div class="hero-car-image" id="car-360-container" style="cursor: grab; user-select: none; position: relative;">
+                        <img id="car-360-img" src="https://s7ap1.scene7.com/is/image/tatapassenger/Oxide-4-2?$PO-850-600-S$&fit=crop&fmt=avif-alpha" alt="Nexon EV 360" draggable="false" style="width: 100%; max-width: 500px;">
+                        <div style="position: absolute; bottom: -10px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: var(--text-muted); pointer-events: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+                            Drag to rotate 360°
+                        </div>
+                    </div>
+                    <div class="hero-car-details">
+                        <div class="hero-car-header" style="margin-bottom: 16px;">
+                            <h3 class="hero-car-name" style="margin-bottom: -2px;">Tata Nexon EV</h3>
+                            <span class="hero-car-subtitle">Empowered Plus 45 LR (2026)</span>
+                        </div>
+                        
+                        <div class="hero-car-specs" style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Model</span>
+                                <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Fearless LR</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Battery Capacity</span>
+                                <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">40.5 kWh</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Power & Torque</span>
+                                <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">142.68 bhp / 215 Nm</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Max Range (ARAI)</span>
+                                <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">380 km</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Status</span>
+                                <span style="font-size: 0.85rem; font-weight: 600; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 12px;">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Stats Section -->
+                <div class="hero-stats-section">
+                    <!-- Top Row: 4 stat cards in a 2x2 grid -->
+                    <div class="hero-stats-row">
+                        <div class="hero-stat-card">
+                            <span class="hero-stat-label">Total Distance</span>
+                            <div class="hero-stat-value-row">
+                                <span id="global-total-distance" class="hero-stat-number">0</span>
+                                <span class="hero-stat-unit">km</span>
+                            </div>
+                            <span class="hero-stat-badge hero-stat-badge-green">+2 added</span>
+                        </div>
+                        <div class="hero-stat-card">
+                            <span class="hero-stat-label">Total EV Cost</span>
+                            <div class="hero-stat-value-row">
+                                <span id="global-total-ev-cost" class="hero-stat-number">₹0.00</span>
+                            </div>
+                            <span class="hero-stat-badge hero-stat-badge-orange">This month</span>
+                        </div>
+                        <div class="hero-stat-card">
+                            <span class="hero-stat-label">Petrol Equiv.</span>
+                            <div class="hero-stat-value-row">
+                                <span id="global-total-petrol" class="hero-stat-number">₹0.00</span>
+                            </div>
+                            <span class="hero-stat-badge hero-stat-badge-orange">Fuel saved</span>
+                        </div>
+                        <div class="hero-stat-card">
+                            <span class="hero-stat-label">Total Profit</span>
+                            <div class="hero-stat-value-row">
+                                <span id="global-total-profit" class="hero-stat-number">₹0.00</span>
+                            </div>
+                            <span class="hero-stat-badge hero-stat-badge-green">Saved</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Bottom: Graph Container -->
+                    <div class="hero-graph-container">
+                        <div class="hero-graph-header">
+                            <span class="hero-graph-title">Cost vs Profit Overview</span>
+                        </div>
+                        <div style="flex: 1; position: relative;">
+                            <canvas id="profitOverviewChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Extended Widgets (Premium SS Style) -->
+                <div class="hero-extended-widgets" style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.5fr; gap: 24px; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 32px;">
+                    
+                    <!-- 1. Daily Distance Trend -->
+                    <div class="premium-widget" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Daily Distance Trend</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Kilometers Driven</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1; position: relative;">
+                            <canvas id="distanceTrendChart" style="width: 100%; height: 100%; min-height: 120px;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 2. Energy Efficiency (km/kWh) -->
+                    <div class="premium-widget" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Energy Efficiency</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">km per kWh</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1; position: relative;">
+                            <canvas id="efficiencyTrendChart" style="width: 100%; height: 100%; min-height: 120px;"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- 3. TPMS (Tyre Pressure) -->
+                    <div class="premium-widget" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Tyre Pressure</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Live TPMS Status</span>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: center;">
+                            <div style="background: var(--bg-main); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Front Left</span>
+                                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">34 <span style="font-size: 0.75rem; font-weight: 500;">psi</span></span>
+                            </div>
+                            <div style="background: var(--bg-main); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Front Right</span>
+                                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">34 <span style="font-size: 0.75rem; font-weight: 500;">psi</span></span>
+                            </div>
+                            <div style="background: var(--bg-main); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(249, 115, 22, 0.3);">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Rear Left</span>
+                                <span style="font-size: 1.1rem; font-weight: 700; color: #f97316;">31 <span style="font-size: 0.75rem; font-weight: 500;">psi</span></span>
+                            </div>
+                            <div style="background: var(--bg-main); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Rear Right</span>
+                                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">33 <span style="font-size: 0.75rem; font-weight: 500;">psi</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 4. Eco Score / Impact -->
+                    <div class="premium-widget" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; overflow: hidden;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 24px; z-index: 2; position: relative;">
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Eco Driving Score</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Environmental Impact</span>
+                            </div>
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 24px; flex: 1;">
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <span style="font-size: 2.8rem; font-weight: 800; color: #10b981; line-height: 1;">94</span>
+                                <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Excellent</span>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 12px; flex: 1; border-left: 1px dashed var(--border-color); padding-left: 20px;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">CO₂ Emissions Saved</span>
+                                    <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">1.4 Tons</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">Equivalent To</span>
+                                    <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">🌲 52 Trees</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        <div class="tabs-wrapper">
+            <div class="tabs-list" id="month-tabs">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+        
+        <div class="main-card">
+            <div class="card-toolbar">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Filter records...">
+                </div>
+                <button id="btn-add-record" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New
+                </button>
+            </div>
+            
+            <div class="table-container">
+            <table class="battery-table" id="battery-table">
+                <thead>
+                    <tr>
+                        <th class="col-date group-date" rowspan="2">Date</th>
+                        <th class="group-charge" colspan="5">Post-Charge Status</th>
+                        <th class="group-drive" colspan="6">Post-Drive Status</th>
+                        <th class="group-calc" colspan="5">Analytics</th>
+                        <th class="col-actions" rowspan="2"></th>
+                    </tr>
+                    <tr>
+                        <th class="group-charge-sub">Percentage</th>
+                        <th class="group-charge-sub">Avg. Energy Cons.</th>
+                        <th class="group-charge-sub col-range">Range</th>
+                        <th class="group-charge-sub">Mode</th>
+                        <th class="group-charge-sub">Level</th>
+                        
+                        <th class="group-drive-sub">Mode</th>
+                        <th class="group-drive-sub">Level</th>
+                        <th class="group-drive-sub">Avg. Energy Cons.</th>
+                        <th class="group-drive-sub col-range">Remaining Range</th>
+                        <th class="group-drive-sub">Distance Driven</th>
+                        <th class="group-drive-sub">Remaining Percentage</th>
+                        
+                        <th class="group-calc-sub">Drive Status</th>
+                        <th class="group-calc-sub">Range Drop</th>
+                        <th class="group-calc-sub">EV Cost (₹)</th>
+                        <th class="group-calc-sub">Petrol Cost Equiv.</th>
+                        <th class="group-calc-sub">Profit (₹)</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Rows will be populated by JS -->
+                </tbody>
+                <tfoot id="table-foot" class="table-totals hidden">
+                    <tr>
+                        <td colspan="10" class="totals-label">Totals:</td>
+                        <td id="total-distance" class="totals-value">0 km</td>
+                        <td></td>
+                        <td></td>
+                        <td id="total-range-drop" class="totals-value">0 km</td>
+                        <td id="total-ev-cost" class="totals-value">₹0.00</td>
+                        <td id="total-petrol" class="totals-value">₹0.00</td>
+                        <td id="total-profit" class="totals-value">₹0.00</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <div id="empty-state" class="empty-state hidden">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+                <h3>No charging records yet</h3>
+                <p>Start tracking your car's charging and driving cycles.</p>
+                <button id="btn-empty-add" class="btn btn-primary">+ Add First Record</button>
+            </div>
+            
+            <div class="table-footer">
+                <button id="btn-add-row" class="btn-add-row">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New
+                </button>
+            </div>
+        </div>
+        </div> <!-- main-card -->
+        </div> <!-- view-dashboard -->
+
+        <!-- Service View -->
+        <div id="view-service" class="view-section hidden">
+            <div class="main-card">
+                <div class="card-toolbar">
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="local-search" data-target="tbody-service" placeholder="Filter service records...">
+                    </div>
+                    <button class="btn btn-primary btn-local-add" data-target="tbody-service">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add Record
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="battery-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Odometer (km)</th>
+                                <th>Service Center</th>
+                                <th>Cost (₹)</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-service">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                    <div class="empty-state hidden" id="empty-service">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+                        <h3>No service records yet</h3>
+                        <p>Start tracking your service center visits.</p>
+                        <button class="btn btn-primary btn-local-add" data-target="tbody-service">+ Add First Record</button>
+                    </div>
+                    <div class="table-footer">
+                        <button class="btn-add-row btn-local-add" data-target="tbody-service">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            New
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tyre Change View -->
+        <div id="view-tyre" class="view-section hidden">
+            <div class="main-card">
+                <div class="card-toolbar">
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="local-search" data-target="tbody-tyre" placeholder="Filter tyre records...">
+                    </div>
+                    <button class="btn btn-primary btn-local-add" data-target="tbody-tyre">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add Record
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="battery-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Odometer (km)</th>
+                                <th>Tyre Brand</th>
+                                <th>Position</th>
+                                <th>Cost (₹)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-tyre">
+                        </tbody>
+                    </table>
+                    <div class="empty-state hidden" id="empty-tyre">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+                        <h3>No tyre records</h3>
+                        <p>Track your tyre rotations and replacements.</p>
+                        <button class="btn btn-primary btn-local-add" data-target="tbody-tyre">+ Add First Record</button>
+                    </div>
+                    <div class="table-footer">
+                        <button class="btn-add-row btn-local-add" data-target="tbody-tyre">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            New
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Issues View -->
+        <div id="view-issues" class="view-section hidden">
+            <div class="main-card">
+                <div class="card-toolbar">
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="local-search" data-target="tbody-issues" placeholder="Filter issues...">
+                    </div>
+                    <button class="btn btn-primary btn-local-add" data-target="tbody-issues">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Report Issue
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="battery-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Issue Type</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-issues">
+                        </tbody>
+                    </table>
+                    <div class="empty-state hidden" id="empty-issues">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <h3>No vehicle issues reported</h3>
+                        <p>Keep track of any problems you encounter.</p>
+                        <button class="btn btn-primary btn-local-add" data-target="tbody-issues">+ Report First Issue</button>
+                    </div>
+                    <div class="table-footer">
+                        <button class="btn-add-row btn-local-add" data-target="tbody-issues">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            New
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Service View -->
+        <div id="view-additional" class="view-section hidden">
+            <div class="main-card">
+                <div class="card-toolbar">
+                    <div class="search-box">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="local-search" data-target="tbody-additional" placeholder="Filter additional services...">
+                    </div>
+                    <button class="btn btn-primary btn-local-add" data-target="tbody-additional">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add Record
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="battery-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Service Type</th>
+                                <th>Provider</th>
+                                <th>Cost (₹)</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-additional">
+                        </tbody>
+                    </table>
+                    <div class="empty-state hidden" id="empty-additional">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                        <h3>No additional services</h3>
+                        <p>Track other expenditures and services.</p>
+                        <button class="btn btn-primary btn-local-add" data-target="tbody-additional">+ Add First Record</button>
+                    </div>
+                    <div class="table-footer">
+                        <button class="btn-add-row btn-local-add" data-target="tbody-additional">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            New
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div> <!-- main-content-wrapper -->
+    </div> <!-- app-container -->
+
+    <!-- Dialog for confirmation -->
+    <div id="dialog-overlay" class="dialog-overlay hidden">
+        <div class="dialog">
+            <h3 class="dialog-title">Delete this charging record?</h3>
+            <p class="dialog-message">This action cannot be undone.</p>
+            <div class="dialog-actions">
+                <button id="btn-cancel-delete" class="btn btn-secondary">Cancel</button>
+                <button id="btn-confirm-delete" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js for Dashboard Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById('profitOverviewChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                        datasets: [
+                            {
+                                label: 'Total EV Cost',
+                                data: [1200, 1900, 800, 1500, 2200, 1000, 1800, 2400],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                pointHoverRadius: 4
+                            },
+                            {
+                                label: 'Petrol Equiv.',
+                                data: [4200, 4400, 4000, 4300, 5700, 5000, 5600, 6600],
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                pointHoverRadius: 4
+                            },
+                            {
+                                label: 'Total Profit',
+                                data: [3000, 2500, 3200, 2800, 3500, 4000, 3800, 4200],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                pointHoverRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    boxWidth: 8,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    font: { size: 10 }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 10 }, color: '#94a3b8' }
+                            },
+                            y: {
+                                border: { display: false },
+                                grid: { color: 'rgba(0,0,0,0.03)' },
+                                ticks: { 
+                                    font: { size: 10 }, 
+                                    color: '#94a3b8',
+                                    callback: function(value) { return '₹' + (value/1000) + 'k'; }
+                                }
+                            }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                    }
+                });
+            }
+        });
+    </script>
+    <!-- 360 Viewer Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById('car-360-container');
+            const img = document.getElementById('car-360-img');
+            
+            if (container && img) {
+                let isDragging = false;
+                let startX = 0;
+                let currentFrame = 4;
+                const totalFrames = 35; // Frames from 0 to 35
+                
+                const getImageUrl = (frame) => {
+                    const suffix = frame === 0 ? '-3' : '-2';
+                    return `https://s7ap1.scene7.com/is/image/tatapassenger/Oxide-${frame}${suffix}?$PO-850-600-S$&fit=crop&fmt=avif-alpha`;
+                };
+
+                // Preload some adjacent images
+                const preloadImage = (frame) => {
+                    const tempImg = new Image();
+                    tempImg.src = getImageUrl(frame);
+                };
+                
+                // Initial preload
+                for (let i = 15; i <= 25; i++) { preloadImage(i); }
+                preloadImage(0); preloadImage(35);
+                
+                container.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX;
+                    container.style.cursor = 'grabbing';
+                });
+                
+                window.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    container.style.cursor = 'grab';
+                });
+                
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const deltaX = e.clientX - startX;
+                    
+                    // Rotate threshold
+                    if (Math.abs(deltaX) > 8) {
+                        if (deltaX > 0) {
+                            currentFrame--; // Drag right, rotate left
+                        } else {
+                            currentFrame++; // Drag left, rotate right
+                        }
+                        
+                        // Loop around
+                        if (currentFrame > totalFrames) currentFrame = 0;
+                        if (currentFrame < 0) currentFrame = totalFrames;
+                        
+                        // Update image
+                        img.src = getImageUrl(currentFrame);
+                        startX = e.clientX;
+                        
+                        // Preload next few in the direction
+                        let nextFrame = currentFrame + (deltaX < 0 ? 1 : -1);
+                        if (nextFrame > totalFrames) nextFrame = 0;
+                        if (nextFrame < 0) nextFrame = totalFrames;
+                        preloadImage(nextFrame);
+                    }
+                });
+                
+                // Touch support
+                container.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    startX = e.touches[0].clientX;
+                }, {passive: true});
+                
+                window.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
+                
+                window.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    const deltaX = e.touches[0].clientX - startX;
+                    if (Math.abs(deltaX) > 5) {
+                        if (deltaX > 0) currentFrame--;
+                        else currentFrame++;
+                        
+                        if (currentFrame > totalFrames) currentFrame = 0;
+                        if (currentFrame < 0) currentFrame = totalFrames;
+                        
+                        img.src = getImageUrl(currentFrame);
+                        startX = e.touches[0].clientX;
+                    }
+                }, {passive: true});
+            }
+        });
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
