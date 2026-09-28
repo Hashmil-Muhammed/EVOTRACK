@@ -2177,3 +2177,40 @@ th:nth-child(16) {
     scrollbar-width: none !important;  /* Firefox */
 }
 
+
+/* UNDO GLOBALLY HIDDEN SCROLLBARS */
+::-webkit-scrollbar {
+    display: block !important;
+    width: 8px;
+    height: 8px;
+}
+* {
+    -ms-overflow-style: auto !important;
+    scrollbar-width: thin !important;
+}
+/* Style the scrollbar to be subtle */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* ZOOM OUT TABLE (Smaller text and padding) */
+.premium-table th,
+.premium-table td {
+    padding: 10px 14px !important;
+    font-size: 0.8rem !important;
+}
+.premium-table thead tr:nth-child(1) th {
+    font-size: 0.8rem !important;
+}
+.premium-table thead tr:nth-child(2) th {
+    font-size: 0.7rem !important;
+    top: 38px !important;
+}
+
