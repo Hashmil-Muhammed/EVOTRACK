@@ -641,22 +641,39 @@
             if (container && img) {
                 let isDragging = false;
                 let startX = 0;
-                let currentFrame = 4;
+                let currentFrame = 6;
                 const totalFrames = 35; // Frames from 0 to 35
                 
-                const getImageUrl = (frame) => {
-                    return `https://s7ap1.scene7.com/is/image/tatapassenger/PrestineWhite-${frame}-3?$PO-850-600-S$&fit=crop&fmt=avif-alpha`;
-                };
-
-                // Preload some adjacent images
-                const preloadImage = (frame) => {
-                    const tempImg = new Image();
-                    tempImg.src = getImageUrl(frame);
-                };
+                // Remove the default single image
+                img.style.display = 'none';
                 
-                // Initial preload
-                for (let i = 15; i <= 25; i++) { preloadImage(i); }
-                preloadImage(0); preloadImage(35);
+                // Create an array to hold all image elements
+                const frames = [];
+                
+                for (let i = 0; i <= totalFrames; i++) {
+                    const frameImg = document.createElement('img');
+                    frameImg.src = `https://s7ap1.scene7.com/is/image/tatapassenger/PrestineWhite-${i}-3?$PO-850-600-S$&fit=crop&fmt=avif-alpha`;
+                    frameImg.style.width = '100%';
+                    frameImg.style.maxWidth = '500px';
+                    frameImg.style.position = 'absolute';
+                    frameImg.style.top = '0';
+                    frameImg.style.left = '0';
+                    frameImg.style.display = (i === currentFrame) ? 'block' : 'none';
+                    frameImg.draggable = false;
+                    
+                    frames.push(frameImg);
+                    // Insert before the text label
+                    container.insertBefore(frameImg, container.children[1]);
+                }
+                
+                // Give container a fixed height based on aspect ratio to support absolute positioning
+                container.style.aspectRatio = "850/600";
+                
+                const updateFrameDisplay = () => {
+                    frames.forEach((f, i) => {
+                        f.style.display = (i === currentFrame) ? 'block' : 'none';
+                    });
+                };
                 
                 container.addEventListener('mousedown', (e) => {
                     isDragging = true;
@@ -674,31 +691,21 @@
                     
                     const deltaX = e.clientX - startX;
                     
-                    // Rotate threshold
                     if (Math.abs(deltaX) > 8) {
                         if (deltaX > 0) {
-                            currentFrame--; // Drag right, rotate left
+                            currentFrame--;
                         } else {
-                            currentFrame++; // Drag left, rotate right
+                            currentFrame++;
                         }
                         
-                        // Loop around
                         if (currentFrame > totalFrames) currentFrame = 0;
                         if (currentFrame < 0) currentFrame = totalFrames;
                         
-                        // Update image
-                        img.src = getImageUrl(currentFrame);
+                        updateFrameDisplay();
                         startX = e.clientX;
-                        
-                        // Preload next few in the direction
-                        let nextFrame = currentFrame + (deltaX < 0 ? 1 : -1);
-                        if (nextFrame > totalFrames) nextFrame = 0;
-                        if (nextFrame < 0) nextFrame = totalFrames;
-                        preloadImage(nextFrame);
                     }
                 });
                 
-                // Touch support
                 container.addEventListener('touchstart', (e) => {
                     isDragging = true;
                     startX = e.touches[0].clientX;
@@ -718,7 +725,7 @@
                         if (currentFrame > totalFrames) currentFrame = 0;
                         if (currentFrame < 0) currentFrame = totalFrames;
                         
-                        img.src = getImageUrl(currentFrame);
+                        updateFrameDisplay();
                         startX = e.touches[0].clientX;
                     }
                 }, {passive: true});
