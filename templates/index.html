@@ -278,16 +278,24 @@
                 </button>
             </div>
             
-            <div class="table-container">
-            <table class="battery-table" id="battery-table">
-                <thead>
-                    <tr>
-                        <th class="col-date group-date" rowspan="2">Date</th>
-                        <th class="group-charge" colspan="5">Post-Charge Status</th>
-                        <th class="group-drive" colspan="6">Post-Drive Status</th>
-                        <th class="group-calc" colspan="5">Analytics</th>
-                        <th class="col-actions" rowspan="2"></th>
-                    </tr>
+            <div class="premium-widget" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin: 24px 0; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="padding: 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: 600; font-size: 1.1rem; color: var(--text-main);">Charging & Driving Logs</span>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Detailed breakdown of all your trips and charging sessions</span>
+                </div>
+            </div>
+            
+            <div class="table-container" style="padding: 0;">
+                <table class="battery-table premium-table" id="battery-table">
+                    <thead>
+                        <tr>
+                            <th class="col-date group-date" rowspan="2">Date</th>
+                            <th class="group-charge" colspan="5">Post-Charge Status</th>
+                            <th class="group-drive" colspan="6">Post-Drive Status</th>
+                            <th class="group-calc" colspan="5">Analytics</th>
+                            <th class="col-actions" rowspan="2" style="width: 60px;"></th>
+                        </tr>
                     <tr>
                         <th class="group-charge-sub">Percentage</th>
                         <th class="group-charge-sub">Avg. Energy Cons.</th>
@@ -340,7 +348,8 @@
                     New
                 </button>
             </div>
-        </div>
+            </div> <!-- Close table-container -->
+        </div> <!-- Close premium-widget -->
         </div> <!-- main-card -->
         </div> <!-- view-dashboard -->
 

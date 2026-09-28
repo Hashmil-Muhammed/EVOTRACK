@@ -2000,3 +2000,52 @@ th:nth-child(16) {
 }
 
 
+
+/* --- Premium Table Overrides --- */
+.table-container {
+    padding: 0;
+}
+
+.premium-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    table-layout: auto;
+}
+
+.premium-table th,
+.premium-table td {
+    padding: 16px 16px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.premium-table td.col-date-cell {
+    text-align: left !important;
+    font-weight: 500;
+}
+
+.premium-table th {
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    color: var(--text-muted) !important;
+    background-color: var(--bg-surface) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.premium-table thead tr:nth-child(1) th {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+    font-weight: 700 !important;
+}
+
+.premium-table thead tr:nth-child(2) th {
+    font-size: 0.75rem !important;
+}
+
