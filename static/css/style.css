@@ -2049,3 +2049,31 @@ th:nth-child(16) {
     font-size: 0.75rem !important;
 }
 
+
+/* Standard Table Borders for Grouping */
+.premium-table th,
+.premium-table td {
+    border-right: 1px solid var(--border-light) !important;
+}
+
+.premium-table th.group-charge, 
+.premium-table th.group-drive, 
+.premium-table th.group-calc {
+    border-left: 2px solid var(--border-color) !important;
+}
+
+.premium-table td:nth-child(2), /* Start of Charge group */
+.premium-table td:nth-child(7), /* Start of Drive group */
+.premium-table td:nth-child(13) /* Start of Calc group */ {
+    border-left: 2px solid var(--border-color) !important;
+}
+
+.premium-table tbody tr:hover td {
+    background-color: var(--bg-main) !important;
+}
+
+/* Enhanced Sticky Header for Standard look */
+.premium-table thead {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
