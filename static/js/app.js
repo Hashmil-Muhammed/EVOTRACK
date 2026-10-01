@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // API Endpoints
     const API_URL = '/api/logs';
-    
+
     // DOM Elements
     const tableBody = document.getElementById('table-body');
     const tableFoot = document.getElementById('table-foot');
@@ -18,19 +18,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancelDelete = document.getElementById('btn-cancel-delete');
     const btnConfirmDelete = document.getElementById('btn-confirm-delete');
 
+    const yearFilter = document.getElementById('year-filter');
+
     // State
     let logs = [];
     let editingCell = null; // { rowId, field, tdElement }
     let logToDelete = null;
     let currentFilterMonth = '';
-    
-    // Set default month
+    let selectedRows = new Set();
+    let isMultiSelectMode = false;
+    let bulkDeleteMode = false;
+
+    // Multi-select DOM elements
+    const tableWidget = document.getElementById('table-widget');
+    const bulkToolbar = document.getElementById('multi-select-toolbar');
+    const bulkCount = document.getElementById('multi-select-count');
+    const btnBulkDelete = document.getElementById('btn-bulk-delete');
+    const btnBulkCancel = document.getElementById('btn-bulk-cancel');
+    let hoveredRowId = null;
+
+    // Set default month and year
     const now = new Date();
-    currentFilterMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    let selectedYear = now.getFullYear();
+    currentFilterMonth = `${selectedYear}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+    // Initialize Year Filter
+    if (yearFilter) {
+        let yearHtml = '';
+        for (let y = 2024; y <= 2030; y++) {
+            yearHtml += `<option value="${y}" ${y === selectedYear ? 'selected' : ''}>${y}</option>`;
+        }
+        yearFilter.innerHTML = yearHtml;
+
+        yearFilter.addEventListener('change', (e) => {
+            selectedYear = parseInt(e.target.value);
+            currentFilterMonth = ''; // Default to "All logs" when year changes
+            renderTable();
+        });
+    }
+
+    // Initialize multi-select UI handlers
+    function updateMultiSelectUI() {
+        if (selectedRows.size > 0) {
+            isMultiSelectMode = true;
+            tableWidget.classList.add('multi-select-active');
+            bulkToolbar.style.opacity = '1';
+            bulkToolbar.style.pointerEvents = 'auto';
+            bulkToolbar.style.transform = 'translateX(-50%) translateY(0)';
+            bulkCount.textContent = `${selectedRows.size} selected`;
+        } else {
+            isMultiSelectMode = false;
+            tableWidget.classList.remove('multi-select-active');
+            bulkToolbar.style.opacity = '0';
+            bulkToolbar.style.pointerEvents = 'none';
+            bulkToolbar.style.transform = 'translateX(-50%) translateY(20px)';
+        }
+    }
+
+    if (btnBulkCancel) {
+        btnBulkCancel.addEventListener('click', () => {
+            selectedRows.clear();
+            renderTable();
+            updateMultiSelectUI();
+        });
+    }
+
+    if (btnBulkDelete) {
+        btnBulkDelete.addEventListener('click', () => {
+            if (selectedRows.size > 0) {
+                bulkDeleteMode = true;
+                openDialog(null);
+            }
+        });
+    }
 
     // Initialize
     fetchLogs();
-    
+
     // --- Theme Toggle ---
     const currentTheme = localStorage.getItem('theme') || 'light';
     if (currentTheme === 'dark') {
@@ -71,20 +135,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    if(btnAddRecord) btnAddRecord.addEventListener('click', createNewRow);
-    if(btnAddRow) btnAddRow.addEventListener('click', createNewRow);
-    if(btnEmptyAdd) btnEmptyAdd.addEventListener('click', createNewRow);
-    
+    if (btnAddRecord) btnAddRecord.addEventListener('click', createNewRow);
+    if (btnAddRow) btnAddRow.addEventListener('click', createNewRow);
+    if (btnEmptyAdd) btnEmptyAdd.addEventListener('click', createNewRow);
+
     btnCancelDelete.addEventListener('click', closeDialog);
-    
+
     // --- Navigation ---
     const navItems = document.querySelectorAll('.top-navbar .nav-item');
     const viewSections = document.querySelectorAll('.view-section');
-    
+
     // Hamburger Menu Logic
     const menuToggle = document.getElementById('menu-toggle');
     const slideMenu = document.getElementById('slide-menu');
-    
+
     if (menuToggle && slideMenu) {
         menuToggle.addEventListener('click', () => {
             menuToggle.classList.toggle('active');
@@ -97,17 +161,17 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const viewId = item.getAttribute('data-view');
             if (!viewId) return;
-            
+
             // Close slide menu on click
             if (menuToggle && slideMenu) {
                 menuToggle.classList.remove('active');
                 slideMenu.classList.remove('active');
             }
-            
+
             // Update active state on nav
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
-            
+
             // Show corresponding view, hide others
             viewSections.forEach(section => {
                 if (section.id === viewId) {
@@ -119,9 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     btnConfirmDelete.addEventListener('click', confirmDelete);
-    
+
     btnExport.addEventListener('click', exportToCSV);
-    
+
     if (searchInput) {
         searchInput.addEventListener('input', () => renderTable());
     }
@@ -135,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 finishEditing(true); // Save on click outside
             }
         }
-        
+
         // Close slide menu if clicking outside
         if (menuToggle && slideMenu && slideMenu.classList.contains('active')) {
             if (!slideMenu.contains(e.target) && !menuToggle.contains(e.target)) {
@@ -177,15 +241,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newLog)
             });
-            
+
             if (!response.ok) throw new Error('Failed to create row');
-            
+
             const savedLog = await response.json();
             // Add to bottom of list
             logs.push(savedLog);
             renderTable();
             showToast('Record added successfully');
-            
+
             // Focus on the new row's date after a slight delay
             setTimeout(() => {
                 const newRow = document.querySelector(`tr[data-id="${savedLog.id}"]`);
@@ -205,10 +269,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Optimistic update
         const index = logs.findIndex(l => l.id === id);
         if (index === -1) return;
-        
+
         const originalLog = { ...logs[index] };
         logs[index] = { ...logs[index], ...updates };
-        
+
         // Re-render just the row
         const row = document.querySelector(`tr[data-id="${id}"]`);
         if (row) {
@@ -221,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates)
             });
-            
+
             if (!response.ok) throw new Error('Failed to update');
             showToast('Saved ✓');
         } catch (error) {
@@ -233,17 +297,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function deleteLog(id) {
+    async function deleteLog(id, skipRender = false) {
         try {
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE'
             });
-            
+
             if (!response.ok) throw new Error('Failed to delete');
-            
-            logs = logs.filter(l => l.id !== id);
-            renderTable();
-            showToast('Record deleted');
+
+            logs = logs.filter(l => l.id !== parseInt(id));
+            if (!skipRender) {
+                renderTable();
+                showToast('Record deleted');
+            }
         } catch (error) {
             showToast('Failed to delete record', 'error');
             console.error(error);
@@ -268,23 +334,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTabs(filteredOutCount = 0) {
         if (!monthTabs) return;
-        
+
         const monthCounts = {};
         logs.forEach(log => {
             const key = getMonthKey(log.date);
             monthCounts[key] = (monthCounts[key] || 0) + 1;
         });
-        
-        const currentYear = new Date().getFullYear();
+
         const sortedKeys = [];
         for (let i = 1; i <= 12; i++) {
-            sortedKeys.push(`${currentYear}-${String(i).padStart(2, '0')}`);
+            sortedKeys.push(`${selectedYear}-${String(i).padStart(2, '0')}`);
         }
-        
+
         let html = `<button class="tab-item ${currentFilterMonth === '' ? 'active' : ''}" data-month="">
             All logs <span class="badge-count">${logs.length}</span>
         </button>`;
-        
+
         sortedKeys.forEach(key => {
             const label = formatMonthLabel(key);
             const count = monthCounts[key] || 0;
@@ -293,9 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${label} <span class="badge-count">${count}</span>
             </button>`;
         });
-        
+
         monthTabs.innerHTML = html;
-        
+
         monthTabs.querySelectorAll('.tab-item').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 currentFilterMonth = e.currentTarget.getAttribute('data-month');
@@ -306,13 +371,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTable() {
         tableBody.innerHTML = '';
-        
+
         const searchTerm = (searchInput?.value || '').toLowerCase();
-        
+
         const filteredLogs = logs.filter(log => {
             // Month filter
             if (currentFilterMonth !== '') {
                 if (getMonthKey(log.date) !== currentFilterMonth) return false;
+            } else {
+                // Year filter for "All logs"
+                const d = new Date(log.date);
+                if (!isNaN(d) && d.getFullYear() !== selectedYear) return false;
             }
             // Search filter
             if (searchTerm) {
@@ -321,9 +390,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return true;
         });
-        
+        filteredLogs.sort((a, b) => {
+            const dateDiff = new Date(a.date) - new Date(b.date);
+            if (dateDiff === 0) return a.id - b.id;
+            return dateDiff;
+        });
+
         renderTabs(); // Update active tab
-        
+
         if (filteredLogs.length === 0) {
             emptyState.classList.remove('hidden');
             tableFoot.classList.add('hidden');
@@ -333,10 +407,14 @@ document.addEventListener('DOMContentLoaded', () => {
             filteredLogs.forEach(log => {
                 const tr = document.createElement('tr');
                 tr.dataset.id = log.id;
+                if (selectedRows.has(log.id)) {
+                    tr.classList.add('selected');
+                }
                 renderRowContent(tr, log);
                 tableBody.appendChild(tr);
             });
         }
+        updateMultiSelectUI();
         updateTotals(filteredLogs);
         updateGlobalTotals();
     }
@@ -346,29 +424,29 @@ document.addEventListener('DOMContentLoaded', () => {
         let sumEvCost = 0;
         let sumPetrol = 0;
         let sumProfit = 0;
-        
+
         logs.forEach(log => {
             const dist = parseFloat(log.distance_driven) || 0;
             const evCost = dist; // The user requested to show Distance Driven as cash for EV Cost
             const petrol = (dist / 16) * 114.27;
             const profit = petrol - evCost;
-            
+
             sumDistance += dist;
             sumEvCost += evCost;
             sumPetrol += petrol;
             sumProfit += profit;
         });
-        
+
         const elDist = document.getElementById('global-total-distance');
         const elEv = document.getElementById('global-total-ev-cost');
         const elPetrol = document.getElementById('global-total-petrol');
         const elProfit = document.getElementById('global-total-profit');
-        
+
         if (elDist) elDist.textContent = sumDistance.toFixed(1);
         if (elEv) elEv.textContent = '₹' + sumEvCost.toFixed(2);
         if (elPetrol) elPetrol.textContent = '₹' + sumPetrol.toFixed(2);
         if (elProfit) elProfit.textContent = '₹' + sumProfit.toFixed(2);
-        
+
         if (typeof renderDashboardCharts === 'function') {
             renderDashboardCharts();
         } else if (window.renderDashboardCharts) {
@@ -385,30 +463,30 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('total-profit').textContent = '₹0.00';
             return;
         }
-        
+
         let sumDistance = 0;
         let sumRangeDrop = 0;
         let sumEvCost = 0;
         let sumPetrol = 0;
         let sumProfit = 0;
-        
+
         filteredLogs.forEach(log => {
             const dist = parseFloat(log.distance_driven) || 0;
             const chargeRange = parseFloat(log.post_charge_range) || 0;
             const remRange = parseFloat(log.remaining_range) || 0;
-            
+
             const drop = (log.post_charge_range !== null && log.remaining_range !== null) ? (chargeRange - remRange) : 0;
             const evCost = dist; // The user requested to show Distance Driven as cash for EV Cost
             const petrol = (dist / 16) * 114.27;
             const profit = petrol - evCost;
-            
+
             sumDistance += dist;
             sumRangeDrop += drop;
             sumEvCost += evCost;
             sumPetrol += petrol;
             sumProfit += profit;
         });
-        
+
         document.getElementById('total-distance').textContent = sumDistance.toFixed(1) + ' km';
         document.getElementById('total-range-drop').textContent = sumRangeDrop.toFixed(1) + ' km';
         document.getElementById('total-ev-cost').textContent = '₹' + sumEvCost.toFixed(2);
@@ -417,10 +495,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderRowContent(tr, log) {
+        const isSelected = selectedRows.has(log.id);
         tr.innerHTML = `
-            <td class="col-date-cell cell-date" data-field="date" data-type="date">${formatDate(log.date)}</td>
+            <td class="col-date-cell cell-date" data-field="date" data-type="date" style="position: relative;">
+                <div class="row-actions-hover-container" style="position: absolute; right: 100%; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 2px; z-index: 999; padding-right: 12px;">
+                    <input type="checkbox" class="row-checkbox" ${isSelected ? 'checked' : ''} style="cursor: pointer; width: 14px; height: 14px; border-radius: 3px; accent-color: var(--text-main); margin-right: 2px;">
+                    <button class="row-action-btn add-btn" style="background: transparent; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Add row">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button class="row-action-btn delete-btn" data-action="delete" style="background: transparent; border: none; cursor: pointer; color: #ef4444; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Delete record">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                </div>
+                ${formatDate(log.date)}
+            </td>
             <td class="cell-charge" data-field="post_charge_percentage" data-type="number" data-suffix="%">${formatValue(log.post_charge_percentage, '%')}</td>
-            <td class="cell-charge" data-field="post_charge_avg_energy_consumption" data-type="number" data-suffix=" Wh/km">${formatValue(log.post_charge_avg_energy_consumption, ' Wh/km')}</td>
             <td class="cell-charge" data-field="post_charge_range" data-type="number" data-suffix=" km">${formatValue(log.post_charge_range, ' km')}</td>
             <td class="cell-charge" data-field="post_charge_mode" data-type="select" data-options="Eco,City,Sport">${formatBadge(log.post_charge_mode)}</td>
             <td class="cell-charge" data-field="post_charge_level" data-type="select" data-options="L1,L2,L3">${formatBadge(log.post_charge_level)}</td>
@@ -438,21 +527,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <td class="cell-calc col-calculated">${formatCalculatedPetrolCost(log)}</td>
             <td class="cell-calc col-calculated">${formatCalculatedProfit(log)}</td>
             
-            <td class="col-actions">
-                <div class="row-actions">
-                    <button class="btn-icon delete" title="Delete record" data-action="delete">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </button>
-                </div>
-            </td>
         `;
 
         // Attach listeners to cells
         Array.from(tr.querySelectorAll('td[data-field]')).forEach(td => {
             td.addEventListener('click', (e) => {
-                // Don't trigger if clicking inside an already active input
-                if (e.target.tagName === 'INPUT' || e.target.closest('.custom-dropdown')) return;
-                
+                // Don't trigger if clicking inside an already active input or action container
+                if (e.target.tagName === 'INPUT' || e.target.closest('.custom-dropdown') || e.target.closest('.row-actions-hover-container')) return;
+
                 const id = parseInt(tr.dataset.id);
                 const field = td.dataset.field;
                 const type = td.dataset.type;
@@ -460,12 +542,42 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Attach listener to checkbox
+        const checkbox = tr.querySelector('.row-checkbox');
+        if (checkbox) {
+            checkbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    selectedRows.add(log.id);
+                    tr.classList.add('selected');
+                } else {
+                    selectedRows.delete(log.id);
+                    tr.classList.remove('selected');
+                }
+                updateMultiSelectUI();
+            });
+        }
+
+        // Attach listener to add button
+        const addBtn = tr.querySelector('.add-btn');
+        if (addBtn) {
+            addBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (btnAddRecord) btnAddRecord.click();
+            });
+        }
+
         // Attach listener to delete button
-        const delBtn = tr.querySelector('.btn-icon.delete');
+        const delBtn = tr.querySelector('.delete-btn');
         if (delBtn) {
             delBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                openDialog(log.id);
+                if (selectedRows.size > 0 && selectedRows.has(log.id)) {
+                    bulkDeleteMode = true;
+                    openDialog(null);
+                } else {
+                    bulkDeleteMode = false;
+                    openDialog(log.id);
+                }
             });
         }
     }
@@ -504,12 +616,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             input.className = 'cell-input';
             input.value = currentValue;
-            
+
             // Clear contents and add input
             td.innerHTML = '';
             td.appendChild(input);
             input.focus();
-            
+
             // Handle key presses
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
@@ -524,18 +636,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderSelectDropdown(td, options, currentValue) {
         td.innerHTML = '';
-        
+
         // Render current badge temporarily
         td.appendChild(createBadgeElement(currentValue || 'Select'));
-        
+
         const dropdown = document.createElement('div');
         dropdown.className = 'custom-dropdown';
-        
+
         options.forEach(opt => {
             const optionEl = document.createElement('div');
             optionEl.className = 'dropdown-option';
             optionEl.appendChild(createBadgeElement(opt));
-            
+
             optionEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (editingCell) {
@@ -545,14 +657,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             dropdown.appendChild(optionEl);
         });
-        
+
         td.classList.add('custom-select-wrapper');
         td.appendChild(dropdown);
     }
 
     function finishEditing(save) {
         if (!editingCell) return;
-        
+
         const { id, field, td, type, originalValue } = editingCell;
         let newValue;
 
@@ -562,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const input = td.querySelector('input');
             newValue = input ? input.value : originalValue;
-            
+
             if (type === 'number' && newValue !== '') {
                 newValue = parseFloat(newValue);
                 // Floor energy consumption
@@ -600,13 +712,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function formatValue(val, suffix = '') {
         if (val === null || val === undefined) return '<span class="empty-cell">-</span>';
-        
+
         // If it's energy consumption, floor it just in case
         if (suffix === '' && typeof val === 'number') {
             // Try to detect if it's integer field but value could be float
             // For now, API handles it, just display
         }
-        
+
         return `<span class="value-display">${val}${suffix}</span>`;
     }
 
@@ -623,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatCalculatedRangeDrop(log) {
-        if (log.post_charge_range === null || log.remaining_range === null || 
+        if (log.post_charge_range === null || log.remaining_range === null ||
             log.post_charge_range === undefined || log.remaining_range === undefined) {
             return '<span class="empty-cell">-</span>';
         }
@@ -659,29 +771,44 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatCalculatedDriveStatus(log) {
         const val = parseFloat(log.post_drive_avg_energy_consumption);
         if (isNaN(val)) return '<span class="empty-cell">-</span>';
-        
+
         let status = '';
         if (val < 120) status = 'Good';
         else if (val <= 140) status = 'Average';
         else status = 'Bad';
-        
+
         return `<span class="badge badge-${status}">${status}</span>`;
     }
 
     // --- Dialogs & Toasts ---
 
     function openDialog(id) {
-        logToDelete = id;
+        if (!bulkDeleteMode) {
+            logToDelete = parseInt(id);
+            document.querySelector('.dialog-title').textContent = "Delete this charging record?";
+        } else {
+            document.querySelector('.dialog-title').textContent = `Delete ${selectedRows.size} records?`;
+        }
         dialogOverlay.classList.remove('hidden');
     }
 
     function closeDialog() {
         logToDelete = null;
+        bulkDeleteMode = false;
         dialogOverlay.classList.add('hidden');
     }
 
-    function confirmDelete() {
-        if (logToDelete) {
+    async function confirmDelete() {
+        if (bulkDeleteMode) {
+            for (let id of selectedRows) {
+                await deleteLog(id, true);
+            }
+            selectedRows.clear();
+            renderTable();
+            updateMultiSelectUI();
+            showToast('Records deleted successfully');
+            closeDialog();
+        } else if (logToDelete) {
             deleteLog(logToDelete);
             closeDialog();
         }
@@ -690,7 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = 'toast';
-        
+
         // Add icon based on type
         let icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
         if (type === 'error') {
@@ -700,10 +827,10 @@ document.addEventListener('DOMContentLoaded', () => {
             icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
             toast.style.backgroundColor = '#3b82f6';
         }
-        
+
         toast.innerHTML = `${icon} ${message}`;
         toastContainer.appendChild(toast);
-        
+
         setTimeout(() => {
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
@@ -712,7 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Export ---
-    
+
     function exportToCSV() {
         if (logs.length === 0) {
             showToast('No data to export', 'info');
@@ -732,7 +859,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const evCost = log.distance_driven !== null ? log.distance_driven.toFixed(2) : '';
                 const petrol = log.distance_driven !== null ? ((log.distance_driven / 16) * 114.27).toFixed(2) : '';
                 const profit = log.distance_driven !== null ? (((log.distance_driven / 16) * 114.27) - log.distance_driven).toFixed(2) : '';
-                
+
                 let driveStatus = '';
                 const val = parseFloat(log.post_drive_avg_energy_consumption);
                 if (!isNaN(val)) {
@@ -740,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     else if (val <= 140) driveStatus = 'Average';
                     else driveStatus = 'Bad';
                 }
-                
+
                 return [
                     log.date || '',
                     log.post_charge_percentage || '',
@@ -773,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
         document.body.removeChild(link);
     }
-    
+
     // --- Local Tables Logic (Service, Tyre, Issues, Additional) ---
     const localConfigs = {
         'tbody-service': { key: 'ev_svc', cols: ['date', 'odo', 'center', 'cost', 'notes'] },
@@ -792,22 +919,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById(target);
         const emptyState = document.getElementById(target.replace('tbody', 'empty'));
         if (!tbody) return;
-        
+
         const config = localConfigs[target];
         let data = JSON.parse(localStorage.getItem(config.key) || '[]');
-        
+
         if (filterText) {
             filterText = filterText.toLowerCase();
             data = data.filter(row => Object.values(row).join(' ').toLowerCase().includes(filterText));
         }
-        
+
         tbody.innerHTML = '';
-        
+
         if (data.length === 0 && !filterText) {
-            if(emptyState) emptyState.classList.remove('hidden');
+            if (emptyState) emptyState.classList.remove('hidden');
             tbody.closest('table').nextElementSibling?.classList.remove('hidden'); // if table foot has hidden? wait, no table-foot is static.
         } else {
-            if(emptyState) emptyState.classList.add('hidden');
+            if (emptyState) emptyState.classList.add('hidden');
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 config.cols.forEach(col => {
@@ -850,12 +977,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const target = e.currentTarget.getAttribute('data-target');
             const config = localConfigs[target];
             let data = JSON.parse(localStorage.getItem(config.key) || '[]');
-            
+
             const newRow = { id: Date.now() };
             // Auto fill date with today
             const today = new Date().toISOString().split('T')[0];
             config.cols.forEach(c => newRow[c] = (c === 'date') ? today : '');
-            
+
             data.push(newRow); // add to bottom
             saveLocalData(config.key, data);
             renderLocalTable(target);
@@ -878,15 +1005,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDashboardCharts() {
         if (!logs || logs.length === 0) return;
-        
+
         // Sort logs by date ascending for charts
         const sortedLogs = [...logs].sort((a, b) => new Date(a.date) - new Date(b.date));
-        
+
         // Take the last 14 logs for trend lines
         const recentLogs = sortedLogs.slice(-14);
         const labels = recentLogs.map(l => l.date ? l.date.substring(5) : '');
         const distances = recentLogs.map(l => parseFloat(l.distance_driven) || 0);
-        
+
         const efficiencies = recentLogs.map(l => {
             const dist = parseFloat(l.distance_driven) || 0;
             const kwh = parseFloat(l.total_kwh) || 0;
@@ -950,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-    
+
     // Expose renderDashboardCharts to global scope so updateGlobalTotals can call it if needed, or call it directly.
     window.renderDashboardCharts = renderDashboardCharts;
 });

@@ -2059,14 +2059,10 @@ th:nth-child(16) {
 .premium-table th.group-charge, 
 .premium-table th.group-drive, 
 .premium-table th.group-calc {
-    border-left: 2px solid var(--border-color) !important;
+    border-left: none !important;
 }
 
-.premium-table td:nth-child(2), /* Start of Charge group */
-.premium-table td:nth-child(7), /* Start of Drive group */
-.premium-table td:nth-child(13) /* Start of Calc group */ {
-    border-left: 2px solid var(--border-color) !important;
-}
+
 
 .premium-table tbody tr:hover td {
     background-color: var(--bg-main) !important;
@@ -2153,14 +2149,11 @@ th:nth-child(16) {
     background-color: var(--bg-main) !important;
 }
 
-/* Group Separators (Subtle Vertical Lines) */
-.premium-table td:nth-child(7), 
-.premium-table td:nth-child(13) {
-    border-left: 1px dashed var(--border-light) !important;
-}
+
+
 .premium-table th.group-drive,
 .premium-table th.group-calc {
-    border-left: 1px solid var(--border-color) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Remove default table CSS conflicts */
@@ -2244,3 +2237,85 @@ body, html, .main-content-wrapper, .app-container {
     scrollbar-width: none !important;
 }
 
+
+/* NEW PREMIUM DARK TABLE OVERRIDES */
+.battery-table thead tr:nth-child(1) th.group-charge {
+    background: linear-gradient(180deg, rgba(234, 179, 8, 0.1) 0%, transparent 100%) !important;
+    color: #fde047 !important;
+    border-top: 2px solid #eab308 !important;
+    border-bottom: 1px solid rgba(234, 179, 8, 0.2) !important;
+}
+.battery-table thead tr:nth-child(1) th.group-drive {
+    background: linear-gradient(180deg, rgba(14, 165, 233, 0.1) 0%, transparent 100%) !important;
+    color: #7dd3fc !important;
+    border-top: 2px solid #0ea5e9 !important;
+    border-bottom: 1px solid rgba(14, 165, 233, 0.2) !important;
+}
+.battery-table thead tr:nth-child(1) th.group-calc {
+    background: linear-gradient(180deg, rgba(148, 163, 184, 0.1) 0%, transparent 100%) !important;
+    color: #cbd5e1 !important;
+    border-top: 2px solid #94a3b8 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+.group-charge-sub {
+    background-color: transparent !important;
+    color: #fef08a !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+.group-drive-sub {
+    background-color: transparent !important;
+    color: #bae6fd !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+.group-calc-sub {
+    background-color: transparent !important;
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .battery-table thead tr:nth-child(1) th.group-charge {
+    background: linear-gradient(180deg, rgba(234, 179, 8, 0.1) 0%, transparent 100%) !important;
+    color: #fde047 !important;
+    border-top: 2px solid #eab308 !important;
+    border-bottom: 1px solid rgba(234, 179, 8, 0.2) !important;
+}
+[data-theme="dark"] .battery-table thead tr:nth-child(1) th.group-drive {
+    background: linear-gradient(180deg, rgba(14, 165, 233, 0.1) 0%, transparent 100%) !important;
+    color: #7dd3fc !important;
+    border-top: 2px solid #0ea5e9 !important;
+    border-bottom: 1px solid rgba(14, 165, 233, 0.2) !important;
+}
+[data-theme="dark"] .battery-table thead tr:nth-child(1) th.group-calc {
+    background: linear-gradient(180deg, rgba(148, 163, 184, 0.1) 0%, transparent 100%) !important;
+    color: #cbd5e1 !important;
+    border-top: 2px solid #94a3b8 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+[data-theme="dark"] .group-charge-sub {
+    background-color: transparent !important;
+    color: #fef08a !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .group-drive-sub {
+    background-color: transparent !important;
+    color: #bae6fd !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .group-calc-sub {
+    background-color: transparent !important;
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+.battery-table tbody td {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+}
+
+/* Group Separators */
+.premium-table td:nth-child(6), 
+.premium-table td:nth-child(12) {
+    border-left: 1px dashed var(--border-light) !important;
+}
+.premium-table th.group-drive,
+.premium-table th.group-calc {
+    border-left: 1px dashed var(--border-light) !important;
+}

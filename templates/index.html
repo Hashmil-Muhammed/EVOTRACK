@@ -7,7 +7,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <style>
+        .row-actions-hover-container { opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+        tr:hover .row-actions-hover-container { opacity: 1 !important; pointer-events: auto !important; }
+        .multi-select-active tr .row-actions-hover-container { opacity: 1 !important; pointer-events: auto !important; }
+        .row-action-btn:hover { background: var(--bg-main) !important; color: var(--text-main) !important; }
+        .row-action-btn[data-action="delete"]:hover { background: #fee2e2 !important; color: #dc2626 !important; }
+        tr.selected td { background-color: rgba(59, 130, 246, 0.05) !important; }
+        
+        .battery-table thead tr:first-child th:first-child { border-top-left-radius: 16px; }
+        .battery-table thead tr:first-child th:last-child { border-top-right-radius: 16px; }
+        .battery-table tbody tr:last-child td:first-child { border-bottom-left-radius: 16px; }
+        .battery-table tbody tr:last-child td:last-child { border-bottom-right-radius: 16px; }
+    </style>
 </head>
 <body>
     <div id="toast-container"></div>
@@ -85,8 +98,8 @@
                 
                 <!-- Left: Car Section -->
                 <div class="hero-car-section">
-                    <div class="hero-car-image" id="car-360-container" style="cursor: grab; user-select: none; position: relative;">
-                        <img id="car-360-img" src="https://s7ap1.scene7.com/is/image/tatapassenger/PrestineWhite-4-3?$PO-850-600-S$&fit=crop&fmt=avif-alpha" alt="Nexon EV 360" draggable="false" style="width: 100%; max-width: 500px;">
+                    <div class="hero-car-image" id="car-360-container" style="cursor: grab; user-select: none; position: relative; margin-top: 60px;">
+                        <img id="car-360-img" src="https://s7ap1.scene7.com/is/image/tatapassenger/PrestineWhite-4-3?$PO-850-600-S$&fit=crop&fmt=avif-alpha" alt="Nexon EV 360" draggable="false" style="width: 100%; max-width: 580px;">
                         <div style="position: absolute; bottom: -10px; left: 0; right: 0; text-align: center; font-size: 0.8rem; color: var(--text-muted); pointer-events: none;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
                             Drag to rotate 360°
@@ -180,7 +193,7 @@
                                 <span style="font-size: 0.8rem; color: var(--text-muted);">Kilometers Driven</span>
                             </div>
                         </div>
-                        <div style="flex: 1; position: relative;">
+                        <div style="flex: none; position: relative; height: 160px; max-height: 160px;">
                             <canvas id="distanceTrendChart" style="width: 100%; height: 100%; min-height: 120px;"></canvas>
                         </div>
                     </div>
@@ -193,7 +206,7 @@
                                 <span style="font-size: 0.8rem; color: var(--text-muted);">km per kWh</span>
                             </div>
                         </div>
-                        <div style="flex: 1; position: relative;">
+                        <div style="flex: none; position: relative; height: 160px; max-height: 160px;">
                             <canvas id="efficiencyTrendChart" style="width: 100%; height: 100%; min-height: 120px;"></canvas>
                         </div>
                     </div>
@@ -260,7 +273,9 @@
                 </div>
             </div>
         
-        <div class="tabs-wrapper">
+        <div class="tabs-wrapper" style="display: flex; gap: 4px; align-items: flex-end;">
+            <select id="year-filter" class="tab-item active" style="margin: 0; outline: none; appearance: none; -webkit-appearance: none; padding-right: 32px; background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23cbd5e1%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 12px center; display: inline-block; font-family: inherit; font-size: 0.9rem; font-weight: 700; color: var(--text-main); cursor: pointer; background-color: var(--bg-surface);">
+            </select>
             <div class="tabs-list" id="month-tabs">
                 <!-- Injected via JS -->
             </div>
@@ -278,28 +293,27 @@
                 </button>
             </div>
             
-            <div class="premium-widget" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin: 24px 0; overflow: hidden; display: flex; flex-direction: column;">
-            <div style="padding: 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-weight: 600; font-size: 1.1rem; color: var(--text-main);">Charging & Driving Logs</span>
-                    <span style="font-size: 0.85rem; color: var(--text-muted);">Detailed breakdown of all your trips and charging sessions</span>
+            <div id="table-widget" class="premium-widget" style="background: var(--bg-surface); border: none; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin: 8px 0 24px 0; display: flex; flex-direction: column; position: relative;">
+
+            <div style="padding: 24px 32px 16px 96px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <h2 style="font-size: 1.25rem; color: var(--text-main); font-weight: 700; margin: 0; letter-spacing: -0.02em;">Charging & Driving Logs</h2>
+                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Detailed breakdown of all your trips and charging sessions</span>
                 </div>
             </div>
             
-            <div class="table-container" style="padding: 32px; overflow-x: auto;">
-                <div style="border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 12px 30px -8px rgba(0,0,0,0.1), 0 4px 10px -4px rgba(0,0,0,0.04);">
-                <table class="battery-table premium-table" id="battery-table">
+            <div class="table-container" style="padding: 0 32px 32px 96px; overflow-x: auto;">
+                <div style="border: 1px solid var(--border-color); border-radius: 16px; overflow: visible; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15), 0 8px 16px -8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.5); background: var(--bg-surface);">
+                <table class="battery-table premium-table" id="battery-table" style="border-radius: 16px;">
                     <thead>
                         <tr>
                             <th class="col-date group-date" rowspan="2">Date</th>
-                            <th class="group-charge" colspan="5">Post-Charge Status</th>
+                            <th class="group-charge" colspan="4">Post-Charge Status</th>
                             <th class="group-drive" colspan="6">Post-Drive Status</th>
                             <th class="group-calc" colspan="5">Analytics</th>
-                            <th class="col-actions" rowspan="2" style="width: 60px;"></th>
                         </tr>
                     <tr>
                         <th class="group-charge-sub">Percentage</th>
-                        <th class="group-charge-sub">Avg. Energy Cons.</th>
                         <th class="group-charge-sub col-range">Range</th>
                         <th class="group-charge-sub">Mode</th>
                         <th class="group-charge-sub">Level</th>
@@ -323,7 +337,7 @@
                 </tbody>
                 <tfoot id="table-foot" class="table-totals hidden">
                     <tr>
-                        <td colspan="10" class="totals-label">Totals:</td>
+                        <td colspan="9" class="totals-label">Totals:</td>
                         <td id="total-distance" class="totals-value">0 km</td>
                         <td></td>
                         <td></td>
@@ -331,7 +345,6 @@
                         <td id="total-ev-cost" class="totals-value">₹0.00</td>
                         <td id="total-petrol" class="totals-value">₹0.00</td>
                         <td id="total-profit" class="totals-value">₹0.00</td>
-                        <td></td>
                     </tr>
                 </tfoot>
             </table>
@@ -641,7 +654,7 @@
             if (container && img) {
                 let isDragging = false;
                 let startX = 0;
-                let currentFrame = 6;
+                let currentFrame = 2;
                 const totalFrames = 35; // Frames from 0 to 35
                 
                 // Remove the default single image
@@ -654,7 +667,7 @@
                     const frameImg = document.createElement('img');
                     frameImg.src = `https://s7ap1.scene7.com/is/image/tatapassenger/PrestineWhite-${i}-3?$PO-850-600-S$&fit=crop&fmt=avif-alpha`;
                     frameImg.style.width = '100%';
-                    frameImg.style.maxWidth = '500px';
+                    frameImg.style.maxWidth = '580px';
                     frameImg.style.position = 'absolute';
                     frameImg.style.top = '0';
                     frameImg.style.left = '0';
@@ -731,7 +744,18 @@
                 }, {passive: true});
             }
         });
+    </script>
+    <div id="multi-select-toolbar" style="position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--bg-surface); padding: 12px 24px; border-radius: 100px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 16px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+        <span id="multi-select-count" style="font-weight: 600; color: var(--text-main);">0 selected</span>
+        <div style="width: 1px; height: 16px; background: var(--border-color);"></div>
+        <button id="btn-bulk-delete" style="background: #fee2e2; color: #dc2626; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            Delete
+        </button>
+        <button id="btn-bulk-cancel" style="background: transparent; color: var(--text-muted); border: none; cursor: pointer; font-weight: 500;">Cancel</button>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/app.js?v=3"></script>
 </body>
 </html>
