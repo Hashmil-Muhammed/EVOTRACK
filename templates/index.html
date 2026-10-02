@@ -21,6 +21,61 @@
         .battery-table tbody tr:last-child td:first-child { border-bottom-left-radius: 16px; }
         .battery-table tbody tr:last-child td:last-child { border-bottom-right-radius: 16px; }
     </style>
+    <style>
+        /* Professional UI Enhancements */
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        [data-theme="dark"] body {
+            background-color: #121212;
+        }
+        
+        .hero-stat-card, .premium-widget, .hero-graph-container, .table-widget-container {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        [data-theme="dark"] .hero-stat-card, [data-theme="dark"] .premium-widget, [data-theme="dark"] .hero-graph-container, [data-theme="dark"] .table-widget-container {
+            background: #18181b !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .hero-stat-card:hover, .premium-widget:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01) !important;
+        }
+        
+        [data-theme="dark"] .hero-stat-card:hover, [data-theme="dark"] .premium-widget:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        .hero-stat-number {
+            color: #0f172a;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        [data-theme="dark"] .hero-stat-number {
+            color: #f8fafc;
+        }
+        
+        .hero-stat-label {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        
+        [data-theme="dark"] .hero-stat-label {
+            color: #94a3b8;
+        }
+    </style>
 </head>
 <body>
     <div id="toast-container"></div>
@@ -53,6 +108,7 @@
                 <!-- Slide Menu (Right Side) -->
                 <nav id="slide-menu" style="position: fixed; top: 0; right: -100%; height: 100vh; width: 300px; display: flex; flex-direction: column; justify-content: center; gap: 36px; padding-left: 60px; background: transparent; transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1500; pointer-events: none;">
                     <a href="#" class="nav-item active" data-view="view-dashboard" style="text-decoration: none; font-size: 0.95rem; font-weight: 600; pointer-events: auto;">Dashboard</a>
+                    <a href="#" class="nav-item" data-view="view-charging-logs" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Charging Logs</a>
                     <a href="#" class="nav-item" data-view="view-service" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Service</a>
                     <a href="#" class="nav-item" data-view="view-tyre" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Tyre Change</a>
                     <a href="#" class="nav-item" data-view="view-issues" style="text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; pointer-events: auto;">Vehicle Issues</a>
@@ -247,9 +303,9 @@
                                 <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Eco Driving Score</span>
                                 <span style="font-size: 0.8rem; color: var(--text-muted);">Environmental Impact</span>
                             </div>
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center;">
+                            <!-- <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            </div>
+                            </div> -->
                         </div>
                         
                         <div style="display: flex; align-items: center; gap: 24px; flex: 1;">
@@ -273,6 +329,10 @@
                 </div>
             </div>
         
+        <!-- Mount point for table on dashboard -->
+        <div id="dashboard-table-mount">
+        
+        <div id="table-widget-container">
         <div class="tabs-wrapper" style="display: flex; gap: 4px; align-items: flex-end;">
             <select id="year-filter" class="tab-item active" style="margin: 0; outline: none; appearance: none; -webkit-appearance: none; padding-right: 32px; background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23cbd5e1%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 12px center; display: inline-block; font-family: inherit; font-size: 0.9rem; font-weight: 700; color: var(--text-main); cursor: pointer; background-color: var(--bg-surface);">
             </select>
@@ -287,13 +347,13 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     <input type="text" id="search-input" placeholder="Filter records...">
                 </div>
-                <button id="btn-add-record" class="btn btn-primary">
+                <button id="btn-add-record" style="display: flex; align-items: center; gap: 8px; background: transparent; border: none; box-shadow: none; color: var(--text-main); font-weight: 600; cursor: pointer; padding: 8px 12px; font-size: 0.95rem;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     New
                 </button>
             </div>
             
-            <div id="table-widget" class="premium-widget" style="background: var(--bg-surface); border: none; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin: 8px 0 24px 0; display: flex; flex-direction: column; position: relative;">
+            <div id="table-widget" style="margin: 8px 0 24px 0; display: flex; flex-direction: column; position: relative;">
 
             <div style="padding: 24px 32px 16px 96px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -303,7 +363,7 @@
             </div>
             
             <div class="table-container" style="padding: 0 32px 32px 96px; overflow-x: auto;">
-                <div style="border: 1px solid var(--border-color); border-radius: 16px; overflow: visible; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15), 0 8px 16px -8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.5); background: var(--bg-surface);">
+                <div style="border: 1px solid var(--border-color); border-radius: 16px; overflow: visible; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15), 0 8px 16px -8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05); background: var(--bg-surface);">
                 <table class="battery-table premium-table" id="battery-table" style="border-radius: 16px;">
                     <thead>
                         <tr>
@@ -354,7 +414,7 @@
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
                 <h3>No charging records yet</h3>
                 <p>Start tracking your car's charging and driving cycles.</p>
-                <button id="btn-empty-add" class="btn btn-primary">+ Add First Record</button>
+                <button id="btn-empty-add" class="btn btn-secondary">+ Add First Record</button>
             </div>
             
             <div class="table-footer">
@@ -366,7 +426,14 @@
             </div> <!-- Close table-container -->
         </div> <!-- Close premium-widget -->
         </div> <!-- main-card -->
+        </div> <!-- table-widget-container -->
+        </div> <!-- dashboard-table-mount -->
         </div> <!-- view-dashboard -->
+
+        <!-- Charging Logs View -->
+        <div id="view-charging-logs" class="view-section hidden">
+            <!-- Table will be dynamically moved here by JS when this view is active -->
+        </div>
 
         <!-- Service View -->
         <div id="view-service" class="view-section hidden">
@@ -376,7 +443,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" class="local-search" data-target="tbody-service" placeholder="Filter service records...">
                     </div>
-                    <button class="btn btn-primary btn-local-add" data-target="tbody-service">
+                    <button class="btn btn-secondary btn-local-add" data-target="tbody-service">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Add Record
                     </button>
@@ -401,7 +468,7 @@
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
                         <h3>No service records yet</h3>
                         <p>Start tracking your service center visits.</p>
-                        <button class="btn btn-primary btn-local-add" data-target="tbody-service">+ Add First Record</button>
+                        <button class="btn btn-secondary btn-local-add" data-target="tbody-service">+ Add First Record</button>
                     </div>
                     <div class="table-footer">
                         <button class="btn-add-row btn-local-add" data-target="tbody-service">
@@ -421,7 +488,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" class="local-search" data-target="tbody-tyre" placeholder="Filter tyre records...">
                     </div>
-                    <button class="btn btn-primary btn-local-add" data-target="tbody-tyre">
+                    <button class="btn btn-secondary btn-local-add" data-target="tbody-tyre">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Add Record
                     </button>
@@ -445,7 +512,7 @@
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle></svg>
                         <h3>No tyre records</h3>
                         <p>Track your tyre rotations and replacements.</p>
-                        <button class="btn btn-primary btn-local-add" data-target="tbody-tyre">+ Add First Record</button>
+                        <button class="btn btn-secondary btn-local-add" data-target="tbody-tyre">+ Add First Record</button>
                     </div>
                     <div class="table-footer">
                         <button class="btn-add-row btn-local-add" data-target="tbody-tyre">
@@ -465,7 +532,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" class="local-search" data-target="tbody-issues" placeholder="Filter issues...">
                     </div>
-                    <button class="btn btn-primary btn-local-add" data-target="tbody-issues">
+                    <button class="btn btn-secondary btn-local-add" data-target="tbody-issues">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Report Issue
                     </button>
@@ -489,7 +556,7 @@
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                         <h3>No vehicle issues reported</h3>
                         <p>Keep track of any problems you encounter.</p>
-                        <button class="btn btn-primary btn-local-add" data-target="tbody-issues">+ Report First Issue</button>
+                        <button class="btn btn-secondary btn-local-add" data-target="tbody-issues">+ Report First Issue</button>
                     </div>
                     <div class="table-footer">
                         <button class="btn-add-row btn-local-add" data-target="tbody-issues">
@@ -509,7 +576,7 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" class="local-search" data-target="tbody-additional" placeholder="Filter additional services...">
                     </div>
-                    <button class="btn btn-primary btn-local-add" data-target="tbody-additional">
+                    <button class="btn btn-secondary btn-local-add" data-target="tbody-additional">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Add Record
                     </button>
@@ -533,7 +600,7 @@
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
                         <h3>No additional services</h3>
                         <p>Track other expenditures and services.</p>
-                        <button class="btn btn-primary btn-local-add" data-target="tbody-additional">+ Add First Record</button>
+                        <button class="btn btn-secondary btn-local-add" data-target="tbody-additional">+ Add First Record</button>
                     </div>
                     <div class="table-footer">
                         <button class="btn-add-row btn-local-add" data-target="tbody-additional">
@@ -756,6 +823,6 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/static/js/app.js?v=3"></script>
+    <script src="/static/js/app2.js?v=5"></script>
 </body>
 </html>

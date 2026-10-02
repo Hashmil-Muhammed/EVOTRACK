@@ -15,10 +15,20 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Car Battery Log API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
