@@ -130,6 +130,9 @@
         width: 14px !important;
         height: 14px !important;
     }
+    .export-text {
+        display: none !important;
+    }
     
     #menu-toggle svg {
         width: 16px !important;
