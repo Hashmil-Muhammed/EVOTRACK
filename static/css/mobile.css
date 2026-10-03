@@ -1,5 +1,5 @@
 /* Mobile Responsive Styles for EV Tracker */
-/* To use this, add <link rel="stylesheet" href="/static/css/mobile.css"> to the <head> of index.html */
+/* Linked automatically in index.html */
 
 @media (max-width: 1024px) {
     /* Tablet optimizations */
@@ -9,6 +9,16 @@
     }
     
     .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Professional UI Classes */
+    .dashboard-hero {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+
+    .hero-extended-widgets {
         grid-template-columns: repeat(2, 1fr) !important;
     }
     
@@ -43,6 +53,34 @@
         width: 100%;
     }
     
+    /* Professional UI overrides */
+    .dashboard-hero {
+        grid-template-columns: 1fr !important;
+        padding: 16px !important;
+    }
+    
+    .hero-car-section {
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+
+    .hero-car-image img {
+        transform: scale(1) !important;
+    }
+    
+    .hero-stats-row {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .hero-extended-widgets {
+        grid-template-columns: 1fr !important;
+    }
+
+    .hero-extended-widgets > div {
+        grid-template-columns: 1fr !important; /* Stack internal grids */
+    }
+
     /* Hide sidebar by default on mobile, show via toggle if implemented */
     .sidebar {
         transform: translateX(-100%);
