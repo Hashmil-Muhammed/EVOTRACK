@@ -1,6 +1,20 @@
 /* Mobile Responsive Styles for EV Tracker */
 /* Linked automatically in index.html */
 
+/* STICKY DATE COLUMN (Desktop & Mobile) */
+.col-date, .col-date-cell {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 20 !important;
+    background: #ffffff !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] .col-date, [data-theme="dark"] .col-date-cell {
+    background: #18181b !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+
 @media (max-width: 1024px) {
     /* Tablet optimizations */
     .dashboard-grid {
@@ -29,10 +43,11 @@
     /* Video Header Card */
     .card[style*="height: 92vh"] {
         height: 60vh !important;
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
     }
     #one3d-intro, #one3d-loop {
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
     }
 }
 
@@ -62,20 +77,29 @@
         width: 100%;
     }
 
-    /* Top Nav Links (Horizontal Scroll on Mobile) */
-    .top-nav-links {
-        display: flex !important;
-        overflow-x: auto !important;
-        white-space: nowrap !important;
-        gap: 16px !important;
-        padding-bottom: 8px !important;
-        -webkit-overflow-scrolling: touch;
-        width: 100%;
+    /* Navbar size reductions */
+    .top-navbar {
+        padding: 12px 16px !important;
     }
-    .top-nav-links .nav-item {
-        font-size: 0.75rem !important; /* Smaller text for mobile */
-        padding: 4px 8px !important;
+    .brand-logo img {
+        height: 28px !important;
     }
+    .brand-name {
+        font-size: 1.1rem !important;
+    }
+    .top-nav-actions {
+        gap: 12px !important;
+        padding-right: 0 !important;
+    }
+    #btn-export {
+        font-size: 0.75rem !important;
+        padding: 4px !important;
+    }
+    #btn-export svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
     #menu-toggle {
         display: flex !important; /* Force hamburger menu to show */
     }
@@ -97,28 +121,14 @@
     }
     
     .hero-car-section {
-        flex-direction: row !important; /* Keep desktop-like side-by-side view */
+        flex-direction: column !important; /* Image on top, text below */
         gap: 12px !important;
         align-items: center !important;
     }
 
-    .hero-car-details {
-        flex: 1.2 !important;
-    }
-    
-    /* Shrink the car text so it fits next to the image on mobile */
-    .hero-car-name {
-        font-size: 1.2rem !important;
-    }
-    .hero-car-subtitle {
-        font-size: 0.65rem !important;
-    }
-    .hero-car-specs span {
-        font-size: 0.7rem !important;
-    }
-
     .hero-car-image {
-        flex: 1 !important;
+        order: 1 !important;
+        width: 100% !important;
         margin-top: 0 !important;
         padding-bottom: 0 !important;
     }
@@ -127,6 +137,11 @@
         transform: scale(1.1) !important;
         max-width: 100% !important;
         height: auto !important;
+    }
+
+    .hero-car-details {
+        order: 2 !important;
+        width: 100% !important;
     }
     
     .hero-stats-row {
@@ -144,11 +159,12 @@
 
     /* Video Header Card */
     .card[style*="height: 92vh"] {
-        height: 45vh !important;
-        border-radius: 0 0 24px 24px !important;
+        height: 40vh !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
     }
     #one3d-intro, #one3d-loop {
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
     }
 
     /* Hide sidebar by default on mobile, show via toggle if implemented */
