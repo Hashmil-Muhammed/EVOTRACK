@@ -1,9 +1,6 @@
 /* Mobile Responsive Styles for EV Tracker */
 /* Linked automatically in index.html */
 
-/* Removed sticky column per user request */
-
-
 @media (max-width: 1024px) {
     /* Tablet optimizations */
     .dashboard-grid {
@@ -82,23 +79,25 @@
     }
     
     .top-nav-links {
-        display: flex !important;
-        overflow-x: auto !important;
-        white-space: nowrap !important;
-        gap: 16px !important;
-        padding: 8px 0 !important;
-        width: 100% !important;
-        order: 3 !important; /* Move below the logo and toggle */
-        -webkit-overflow-scrolling: touch;
+        display: none !important;
     }
-    .top-nav-links .nav-item {
-        font-size: 0.85rem !important;
+    
+    /* Disable sticky columns from style.css */
+    .battery-table th.col-date,
+    .battery-table td.col-date-cell,
+    .col-date,
+    .col-date-cell {
+        position: static !important;
+        background-color: transparent !important;
+        z-index: 1 !important;
+        border-right: none !important;
     }
-
+    
     .top-nav-actions {
         gap: 12px !important;
         padding-right: 0 !important;
     }
+    
     #btn-export {
         font-size: 0.75rem !important;
         padding: 4px !important;
