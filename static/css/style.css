@@ -2395,3 +2395,10 @@ html,
     background-color: transparent !important;
     color: var(--text-main) !important;
 }
+
+/* Footer Logo Theme Swap */
+.dark-mode-logo { display: none !important; }
+.light-mode-logo { display: inline-block !important; }
+[data-theme="dark"] .light-mode-logo { display: none !important; }
+[data-theme="dark"] .dark-mode-logo { display: inline-block !important; }
+
