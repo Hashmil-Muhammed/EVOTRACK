@@ -103,22 +103,7 @@
     }
     
     .theme-switch-wrapper {
-        gap: 4px !important;
-    }
-    
-    .theme-switch-wrapper svg {
-        width: 12px !important;
-        height: 12px !important;
-    }
-    
-    .theme-switch {
-        width: 28px !important;
-        height: 16px !important;
-    }
-    
-    .theme-switch-thumb {
-        width: 12px !important;
-        height: 12px !important;
+        gap: 6px !important;
     }
     
     #btn-export {
