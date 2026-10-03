@@ -29,10 +29,10 @@
     /* Video Header Card */
     .card[style*="height: 92vh"] {
         height: 60vh !important;
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
     }
     #one3d-intro, #one3d-loop {
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
     }
 }
 
@@ -90,13 +90,13 @@
     }
     
     .hero-car-section {
-        flex-direction: row !important; /* Keep desktop-like view */
-        gap: 8px !important;
-        align-items: center !important;
+        flex-direction: column !important; /* Stack details below car */
+        gap: 16px !important;
     }
 
     .hero-car-details {
         flex: 1 !important;
+        width: 100% !important;
     }
     .hero-car-name {
         font-size: 1.2rem !important;
@@ -135,10 +135,10 @@
     /* Video Header Card */
     .card[style*="height: 92vh"] {
         height: 45vh !important;
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
     }
     #one3d-intro, #one3d-loop {
-        border-radius: 0 0 24px 24px !important;
+        border-radius: 20px !important;
     }
 
     /* Hide sidebar by default on mobile, show via toggle if implemented */
