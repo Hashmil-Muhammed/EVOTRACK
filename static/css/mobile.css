@@ -234,11 +234,11 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
-        margin-bottom: 8px !important;
+        margin-bottom: 0 !important;
     }
     
     /* Hide the top + New button on mobile */
-    #btn-add {
+    #btn-add, .btn-local-add {
         display: none !important;
     }
     
