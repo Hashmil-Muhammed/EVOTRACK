@@ -31,6 +31,9 @@
         height: 60vh !important;
         border-radius: 0 0 24px 24px !important;
     }
+    #one3d-intro, #one3d-loop {
+        border-radius: 0 0 24px 24px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -70,10 +73,11 @@
         width: 100%;
     }
     .top-nav-links .nav-item {
-        font-size: 0.85rem !important;
+        font-size: 0.75rem !important; /* Smaller text for mobile */
+        padding: 4px 8px !important;
     }
     #menu-toggle {
-        display: none !important;
+        display: block !important; /* Keep the hamburger just in case */
     }
     
     /* Professional UI overrides */
@@ -83,17 +87,24 @@
     }
     
     .hero-car-section {
-        flex-direction: column !important;
-        gap: 16px !important;
+        flex-direction: row !important; /* Keep desktop-like view */
+        gap: 8px !important;
+        align-items: center !important;
+    }
+
+    .hero-car-details {
+        flex: 1 !important;
     }
 
     .hero-car-image {
+        flex: 1 !important;
         margin-top: 0 !important;
-        padding-bottom: 24px !important;
+        padding-bottom: 0 !important;
     }
 
     .hero-car-image img {
-        transform: scale(1) !important;
+        transform: scale(1.2) !important;
+        max-width: 100% !important;
     }
     
     .hero-stats-row {
@@ -112,6 +123,9 @@
     /* Video Header Card */
     .card[style*="height: 92vh"] {
         height: 45vh !important;
+        border-radius: 0 0 24px 24px !important;
+    }
+    #one3d-intro, #one3d-loop {
         border-radius: 0 0 24px 24px !important;
     }
 
