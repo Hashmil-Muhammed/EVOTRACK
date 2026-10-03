@@ -12,6 +12,10 @@
         grid-template-columns: repeat(2, 1fr) !important;
     }
 
+    .table-container {
+        padding-left: 80px !important;
+    }
+
     /* Professional UI Classes */
     .dashboard-hero {
         grid-template-columns: 1fr !important;
@@ -260,19 +264,14 @@
         object-fit: contain;
     }
 
-    /* Fix row actions (Delete button) disappearing to the left */
+    /* Keep row actions outside the date column but visible */
     .row-actions-hover-container {
-        position: static !important;
-        transform: none !important;
         opacity: 1 !important;
         visibility: visible !important;
-        padding-right: 8px !important;
     }
     
+    /* We don't need to change col-date-cell's display since actions are absolute */
     .col-date-cell {
-        display: flex !important;
-        align-items: center !important;
-        gap: 8px !important;
     }
 }
 
