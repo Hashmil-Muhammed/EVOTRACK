@@ -69,6 +69,10 @@
     /* Navbar size reductions */
     .top-navbar {
         padding: 12px 16px !important;
+        flex-wrap: wrap !important;
+    }
+    .brand-logo {
+        flex: 1 !important;
     }
     .brand-logo img {
         height: 28px !important;
@@ -76,6 +80,21 @@
     .brand-name {
         font-size: 1.1rem !important;
     }
+    
+    .top-nav-links {
+        display: flex !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        gap: 16px !important;
+        padding: 8px 0 !important;
+        width: 100% !important;
+        order: 3 !important; /* Move below the logo and toggle */
+        -webkit-overflow-scrolling: touch;
+    }
+    .top-nav-links .nav-item {
+        font-size: 0.85rem !important;
+    }
+
     .top-nav-actions {
         gap: 12px !important;
         padding-right: 0 !important;
