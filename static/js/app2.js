@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // API Endpoints
-    const API_URL = 'http://localhost:8000/api/logs';
+    const API_URL = '/api/logs';
 
     // DOM Elements
     const tableBody = document.getElementById('table-body');
