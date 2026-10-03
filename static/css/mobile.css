@@ -62,6 +62,34 @@
         width: 100%;
     }
 
+    /* Fix sticky date column on mobile */
+    .battery-table th.col-date,
+    .battery-table td.col-date-cell {
+        position: static !important;
+    }
+
+    /* Reduce Navbar Sizes on Mobile */
+    .top-navbar {
+        padding: 12px 16px !important;
+    }
+    .brand-logo img {
+        height: 32px !important;
+    }
+    .brand-name {
+        font-size: 1.1rem !important;
+    }
+    .top-nav-actions {
+        gap: 16px !important;
+        padding-right: 0 !important;
+    }
+    .theme-icon-sun, .theme-icon-moon, #btn-export svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    #btn-export {
+        font-size: 0.8rem !important;
+    }
+
     /* Hide top nav links on mobile and rely on Slide Menu */
     .top-nav-links {
         display: none !important;
