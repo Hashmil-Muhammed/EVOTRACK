@@ -111,14 +111,17 @@
         display: flex !important; /* Force hamburger menu to show */
     }
     
-    /* Make slide-menu items smaller for mobile */
+    /* Make slide-menu items smaller for mobile and ensure it has a background */
     #slide-menu {
         width: 250px !important;
         gap: 20px !important;
         padding-left: 30px !important;
+        background: var(--bg-surface) !important;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1) !important;
     }
     #slide-menu .nav-item {
         font-size: 0.85rem !important;
+        color: var(--text-main) !important;
     }
     
     /* Professional UI overrides */
@@ -255,6 +258,21 @@
     .car-viewer-container img {
         max-width: 100%;
         object-fit: contain;
+    }
+
+    /* Fix row actions (Delete button) disappearing to the left */
+    .row-actions-hover-container {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        padding-right: 8px !important;
+    }
+    
+    .col-date-cell {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
     }
 }
 
