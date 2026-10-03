@@ -62,22 +62,25 @@
         width: 100%;
     }
 
-    /* Top Nav Links (Horizontal Scroll on Mobile) */
+    /* Hide top nav links on mobile and rely on Slide Menu */
     .top-nav-links {
-        display: flex !important;
-        overflow-x: auto !important;
-        white-space: nowrap !important;
-        gap: 16px !important;
-        padding-bottom: 8px !important;
-        -webkit-overflow-scrolling: touch;
-        width: 100%;
+        display: none !important;
     }
-    .top-nav-links .nav-item {
-        font-size: 0.75rem !important; /* Smaller text for mobile */
-        padding: 4px 8px !important;
-    }
+    
     #menu-toggle {
-        display: block !important; /* Keep the hamburger just in case */
+        display: flex !important; /* Hamburger menu visible */
+    }
+
+    #slide-menu {
+        background: var(--bg-surface) !important;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.1) !important;
+        z-index: 9999 !important;
+        width: 250px !important;
+        padding-left: 30px !important;
+    }
+    
+    #slide-menu .nav-item {
+        color: var(--text-main) !important; /* Ensure visibility */
     }
     
     /* Professional UI overrides */
@@ -95,6 +98,15 @@
     .hero-car-details {
         flex: 1 !important;
     }
+    .hero-car-name {
+        font-size: 1.2rem !important;
+    }
+    .hero-car-subtitle {
+        font-size: 0.6rem !important;
+    }
+    .hero-car-specs span {
+        font-size: 0.7rem !important;
+    }
 
     .hero-car-image {
         flex: 1 !important;
@@ -103,7 +115,7 @@
     }
 
     .hero-car-image img {
-        transform: scale(1.2) !important;
+        transform: scale(1.1) !important;
         max-width: 100% !important;
     }
     
