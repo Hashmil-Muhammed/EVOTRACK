@@ -76,10 +76,10 @@
         padding: 8px 12px !important;
     }
     .brand-logo img {
-        height: 20px !important;
+        height: 26px !important;
     }
     .brand-name {
-        font-size: 0.9rem !important;
+        font-size: 1.05rem !important;
     }
     
     .top-nav-links {
@@ -132,8 +132,8 @@
     }
     
     #menu-toggle svg {
-        width: 20px !important;
-        height: 20px !important;
+        width: 16px !important;
+        height: 16px !important;
     }
 
     #menu-toggle {
@@ -233,7 +233,13 @@
     .card-toolbar {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 8px;
+        margin-bottom: 8px !important;
+    }
+    
+    /* Hide the top + New button on mobile */
+    #btn-add {
+        display: none !important;
     }
     
     .search-box {
