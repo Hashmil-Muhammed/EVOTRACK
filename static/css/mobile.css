@@ -106,6 +106,21 @@
         gap: 6px !important;
     }
     
+    .theme-switch-wrapper svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
+    .theme-switch {
+        width: 34px !important;
+        height: 20px !important;
+    }
+    
+    .theme-switch-thumb {
+        width: 14px !important;
+        height: 14px !important;
+    }
+    
     #btn-export {
         font-size: 0.7rem !important;
         padding: 4px !important;
