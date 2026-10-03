@@ -1,18 +1,7 @@
 /* Mobile Responsive Styles for EV Tracker */
 /* Linked automatically in index.html */
 
-/* STICKY DATE COLUMN (Desktop & Mobile) */
-.col-date, .col-date-cell {
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 20 !important;
-    background: #ffffff !important;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-}
-[data-theme="dark"] .col-date, [data-theme="dark"] .col-date-cell {
-    background: #18181b !important;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-}
+/* Removed sticky column per user request */
 
 
 @media (max-width: 1024px) {
