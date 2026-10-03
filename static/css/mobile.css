@@ -25,6 +25,12 @@
     .sidebar {
         width: 220px;
     }
+
+    /* Video Header Card */
+    .card[style*="height: 92vh"] {
+        height: 60vh !important;
+        border-radius: 0 0 24px 24px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -52,6 +58,23 @@
         padding: 70px 12px 24px;
         width: 100%;
     }
+
+    /* Top Nav Links (Horizontal Scroll on Mobile) */
+    .top-nav-links {
+        display: flex !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        gap: 16px !important;
+        padding-bottom: 8px !important;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+    .top-nav-links .nav-item {
+        font-size: 0.85rem !important;
+    }
+    #menu-toggle {
+        display: none !important;
+    }
     
     /* Professional UI overrides */
     .dashboard-hero {
@@ -62,6 +85,11 @@
     .hero-car-section {
         flex-direction: column !important;
         gap: 16px !important;
+    }
+
+    .hero-car-image {
+        margin-top: 0 !important;
+        padding-bottom: 24px !important;
     }
 
     .hero-car-image img {
@@ -79,6 +107,12 @@
 
     .hero-extended-widgets > div {
         grid-template-columns: 1fr !important; /* Stack internal grids */
+    }
+
+    /* Video Header Card */
+    .card[style*="height: 92vh"] {
+        height: 45vh !important;
+        border-radius: 0 0 24px 24px !important;
     }
 
     /* Hide sidebar by default on mobile, show via toggle if implemented */
