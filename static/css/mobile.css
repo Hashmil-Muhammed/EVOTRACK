@@ -238,8 +238,16 @@
     }
     
     /* Hide the top + New button on mobile */
-    #btn-add, .btn-local-add {
+    #btn-add, #btn-add-record, .btn-local-add {
         display: none !important;
+    }
+    
+    /* Reduce gap above Charging & Driving Logs title */
+    #table-widget {
+        margin-top: 0 !important;
+    }
+    #table-widget > div:first-child {
+        padding: 8px 12px 16px 12px !important;
     }
     
     .search-box {
