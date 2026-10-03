@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // API Endpoints
-    const API_URL = 'http://localhost:8000/api/logs';
+    const API_URL = '/api/logs';
 
     // DOM Elements
     const tableBody = document.getElementById('table-body');
@@ -172,16 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            // Move table widget dynamically
-            const tableWidget = document.getElementById('table-widget-container');
-            if (tableWidget) {
-                if (viewId === 'view-charging-logs') {
-                    document.getElementById('view-charging-logs').appendChild(tableWidget);
-                } else if (viewId === 'view-dashboard') {
-                    document.getElementById('dashboard-table-mount').appendChild(tableWidget);
-                }
-            }
-
             // Show corresponding view, hide others
             viewSections.forEach(section => {
                 if (section.id === viewId) {
@@ -228,8 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
             logs = await response.json();
             renderTable();
         } catch (error) {
-            showToast('Error loading data: ' + error.message, 'error');
-            console.error('Fetch Logs Error:', error);
+            showToast('Error loading data', 'error');
+            console.error(error);
         }
     }
 
@@ -252,10 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(newLog)
             });
 
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(errText || 'Failed to create row');
-            }
+            if (!response.ok) throw new Error('Failed to create row');
 
             const savedLog = await response.json();
             // Add to bottom of list
@@ -273,8 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 100);
 
         } catch (error) {
-            showToast('Failed to create record: ' + error.message, 'error');
-            console.error('Create Row Error:', error);
+            showToast('Failed to create record', 'error');
+            console.error(error);
         }
     }
 
@@ -455,10 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const elPetrol = document.getElementById('global-total-petrol');
         const elProfit = document.getElementById('global-total-profit');
 
-        animateValue(elDist, 0, sumDistance, 1500, '', 1);
-        animateValue(elEv, 0, sumEvCost, 1500, '₹', 2);
-        animateValue(elPetrol, 0, sumPetrol, 1500, '₹', 2);
-        animateValue(elProfit, 0, sumProfit, 1500, '₹', 2);
+        if (elDist) elDist.textContent = sumDistance.toFixed(1);
+        if (elEv) elEv.textContent = '₹' + sumEvCost.toFixed(2);
+        if (elPetrol) elPetrol.textContent = '₹' + sumPetrol.toFixed(2);
+        if (elProfit) elProfit.textContent = '₹' + sumProfit.toFixed(2);
 
         if (typeof renderDashboardCharts === 'function') {
             renderDashboardCharts();
@@ -466,42 +453,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.renderDashboardCharts();
         }
     }
-
-    function animateValue(obj, start, end, duration, prefix = '', decimals = 2) {
-        if (!obj) return;
-        // Don't animate if it's already at the target to prevent weird flashes on re-renders
-        const currentText = obj.textContent.replace(/[^0-9.]/g, '');
-        if (parseFloat(currentText) === end) return;
-        
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            // Ease out cubic
-            const easeProgress = 1 - Math.pow(1 - progress, 3);
-            const current = start + easeProgress * (end - start);
-            
-            // Format number with Indian commas
-            const formatted = current.toLocaleString('en-IN', {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            });
-            obj.textContent = prefix + formatted;
-            
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            } else {
-                const finalFormatted = end.toLocaleString('en-IN', {
-                    minimumFractionDigits: decimals,
-                    maximumFractionDigits: decimals
-                });
-                obj.textContent = prefix + finalFormatted;
-            }
-        };
-        window.requestAnimationFrame(step);
-    }
-
-
 
     function updateTotals(filteredLogs = logs) {
         if (filteredLogs.length === 0) {
@@ -1072,9 +1023,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. Daily Distance Chart
         const ctxDist = document.getElementById('distanceTrendChart');
         if (ctxDist) {
-            let chart1 = Chart.getChart("distanceTrendChart");
-            if (chart1) chart1.destroy();
-            window.distanceChartInstance = new Chart(ctxDist, {
+            if (distanceChartInstance) distanceChartInstance.destroy();
+            distanceChartInstance = new Chart(ctxDist, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -1100,9 +1050,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Efficiency Chart (km/kWh)
         const ctxEff = document.getElementById('efficiencyTrendChart');
         if (ctxEff) {
-            let chart2 = Chart.getChart("efficiencyTrendChart");
-            if (chart2) chart2.destroy();
-            window.efficiencyChartInstance = new Chart(ctxEff, {
+            if (efficiencyChartInstance) efficiencyChartInstance.destroy();
+            efficiencyChartInstance = new Chart(ctxEff, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -1120,93 +1069,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
-        }
-        
-        // 3. Profit Overview Chart (Cost vs Profit)
-        const ctxProfit = document.getElementById('profitOverviewChart');
-        if (ctxProfit) {
-            let chart3 = Chart.getChart("profitOverviewChart");
-            if (chart3) chart3.destroy();
-            
-            const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const currentMonthIndex = new Date().getMonth();
-            const dynLabels = allMonths.slice(0, currentMonthIndex + 1);
-            
-            const dynEv = new Array(currentMonthIndex + 1).fill(0);
-            const dynPetrol = new Array(currentMonthIndex + 1).fill(0);
-            const dynProfit = new Array(currentMonthIndex + 1).fill(0);
-            
-            const currentYear = new Date().getFullYear();
-            
-            logs.forEach(log => {
-                const d = new Date(log.date);
-                if (d.getFullYear() === currentYear) {
-                    const m = d.getMonth();
-                    if (m <= currentMonthIndex) {
-                        const dist = parseFloat(log.distance_driven) || 0;
-                        const evC = dist; 
-                        const petC = (dist / 16) * 114.27;
-                        
-                        dynEv[m] += evC;
-                        dynPetrol[m] += petC;
-                        dynProfit[m] += (petC - evC);
-                    }
-                }
-            });
-            
-            window.profitChartInstance = new Chart(ctxProfit, {
-                type: 'line',
-                data: {
-                    labels: dynLabels,
-                    datasets: [
-                        {
-                            label: 'Total Profit (₹)',
-                            data: dynProfit,
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Petrol Equiv. (₹)',
-                            data: dynPetrol,
-                            borderColor: '#ef4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'EV Cost (₹)',
-                            data: dynEv,
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { 
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                usePointStyle: true,
-                                color: 'rgba(148, 163, 184, 0.8)'
-                            }
-                        } 
-                    },
                     scales: {
                         y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
                         x: { grid: { display: false } }
