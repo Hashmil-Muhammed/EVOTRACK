@@ -2,16 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // API Endpoints
     const API_URL = '/api/logs';
 
-    // Dynamically fix the table header if Actions is missing
-    const headerRow = document.querySelector('#battery-table thead tr:first-child');
-    if (headerRow && !headerRow.querySelector('.group-actions')) {
-        const actionsTh = document.createElement('th');
-        actionsTh.className = 'group-actions';
-        actionsTh.rowSpan = 2;
-        actionsTh.textContent = 'Actions';
-        headerRow.appendChild(actionsTh);
-    }
-
     // DOM Elements
     const tableBody = document.getElementById('table-body');
     const tableFoot = document.getElementById('table-foot');
